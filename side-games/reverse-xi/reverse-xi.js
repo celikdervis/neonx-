@@ -110,13 +110,35 @@ function stopManualRecording(){
  try{state.speech?.stop()}catch{}
  state.speech=null;state.recorder.stop();
 }
+async function decodeAudioWithElement(blob,ctx){
+ return new Promise(async(resolve,reject)=>{
+  const url=URL.createObjectURL(blob),audio=new Audio(),source=ctx.createMediaElementSource(audio),processor=ctx.createScriptProcessor(4096,1,1),chunks=[];
+  let settled=false;
+  const cleanup=()=>{audio.pause();audio.removeAttribute('src');audio.load();URL.revokeObjectURL(url);try{source.disconnect();processor.disconnect()}catch{}};
+  const fail=error=>{if(settled)return;settled=true;cleanup();reject(error)};
+  processor.onaudioprocess=e=>{if(!settled)chunks.push(new Float32Array(e.inputBuffer.getChannelData(0)))};
+  source.connect(processor);processor.connect(ctx.destination);audio.preload='auto';audio.src=url;
+  audio.onerror=()=>fail(new Error('Safari kayıt dosyasını oynatamadı.'));
+  audio.onended=()=>{
+   if(settled)return;settled=true;
+   const total=chunks.reduce((n,x)=>n+x.length,0),buffer=ctx.createBuffer(1,total,ctx.sampleRate),out=buffer.getChannelData(0);
+   let offset=0;for(const chunk of chunks){out.set(chunk,offset);offset+=chunk.length}
+   cleanup();resolve(buffer);
+  };
+  try{await ctx.resume();await audio.play()}catch(error){fail(error)}
+ });
+}
 async function reverseBlob(blob){
  const AudioContextClass=window.AudioContext||window.webkitAudioContext;
  if(!AudioContextClass)throw new Error('Bu tarayıcı ses dönüştürmeyi desteklemiyor.');
  const ctx=new AudioContextClass();
  try{
-  const bytes=await blob.arrayBuffer();
-  const buffer=await ctx.decodeAudioData(bytes.slice(0));
+  let buffer;
+  try{buffer=await ctx.decodeAudioData((await blob.arrayBuffer()).slice(0))}
+  catch(decodeError){
+   console.warn('Reverse XI: native decoder fallback',{mimeType:blob.type,size:blob.size,error:decodeError});
+   buffer=await decodeAudioWithElement(blob,ctx);
+  }
   const rate=22050,length=Math.ceil(buffer.duration*rate),samples=new Float32Array(length),src=buffer.getChannelData(0);
   for(let i=0;i<length;i++){
    const pos=i*(buffer.sampleRate/rate),lo=Math.floor(pos),hi=Math.min(src.length-1,lo+1),frac=pos-lo;
@@ -124,8 +146,8 @@ async function reverseBlob(blob){
   }
   return await blobData(encodeWav(samples,rate));
  }catch(error){
-  console.error('Reverse XI audio decode failed',{mimeType:blob.type,size:blob.size,error});
-  throw new Error(/iPhone|iPad|iPod/.test(navigator.userAgent)?'iPhone ses formatı çözülemedi. Safari sekmesini yenileyip tekrar kaydet.':'Ses çözülemedi. Tekrar kayıt yapmayı dene.');
+  console.error('Reverse XI audio processing failed',{mimeType:blob.type,size:blob.size,error});
+  throw new Error(/iPhone|iPad|iPod/.test(navigator.userAgent)?'iPhone ses kaydı Safari tarafından işlenemedi. Sayfayı yenileyip daha kısa bir kayıt dene.':'Ses işlenemedi. Tekrar kayıt yapmayı dene.');
  }finally{
   if(ctx.state!=='closed')await ctx.close().catch(()=>{});
  }
