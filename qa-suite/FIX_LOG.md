@@ -74,3 +74,23 @@ bu sürüm dizelerinin güncellenmesi önerilir. Bu çalışmada HTML dosyaları
 | Bildirim mesajı | Alttan üste taşındı; "Kayıt başladı" mesajı kayıt/durdur butonunu örtüyordu |
 | Testler | R-11 (gösterge + panel), R-12 (partiden `nxAuto` ile lider/üye aynı odaya otomatik giriş) |
 | Dosyalar | `side-games/reverse-xi/reverse-xi.js`, `reverse-xi.css`, `index.html` (`?v=` etiketleri) |
+
+## FIX-07 → UX-07 (Football Wordle, kısa ekranlar)
+
+| | |
+|---|---|
+| Dosya | `side-games/football-wordle/index.html` (yalnızca CSS ve sayfa sonuna küçük bir sığdırma betiği) |
+| Başlık | `h1` boyutu iki başlık butonu arasındaki alana göre sınırlandı (`min(clamp(...), calc((100vw - 184px) / 12.6))`, ≤370 px'te `160px`) |
+| Kısa dikey ekran (`max-height:700px`) | Üst bilgi, tahta ve klavye boşlukları sıkılaştı; tuş yüksekliği 40 px |
+| Sığdırma betiği | Alt çubuk varsa `body` alt boşluğunu ayrılmış alan kabul eder; klavye bu alanın üstüne gelene kadar tahtanın `width` değerini orantılı küçültür (en fazla 5 adım, kare en az 28 px). Boyut, yön, yazı tipi yüklenmesi ve tahta değişince yeniden çalışır. `width` ayarladığı için oyunun kısa kelimeler için koyduğu `max-width` geçerli kalır |
+| İlk deneme | Alt çubuğun kutusu üstte saydam olduğu için Galaxy S8'de gereksiz küçültme yaptı; geri alındı. İkinci sürüm 200 px alt sınıra dayanıyordu ve 14 Pro Max'te 3 harfli kelimede bozuldu; alt sınır kare boyutuna çevrildi |
+| Oyun mantığı | **Değişmedi** |
+
+## FIX-08 → UX-08 (Career Twin menüsü)
+
+| | |
+|---|---|
+| Dosya | `side-games/career-twin/xox-family-ui-v1.css` (dosya sonuna 2 kural), `side-games/career-twin/index.html` (`?v=` etiketi) |
+| Kök neden | `aeabe15` "Nasıl oynanır" kartını geri ekledi (`top:69.55%`), ama ≤700 px kuralı mod panelini %40 yüksekliğe büyütüyor (alt kenar %76,5): kart RAKİP ARA'nın üstüne biniyordu. Ayrıca mod listesi panelin %8'inden başlıyor, başlık ise %6,5'te: başlık ilk butonun arkasında kalıyordu |
+| Sonra | Mod listesi `top: calc(6.5% + 3.9cqw + 9px)` (başlığın yazı boyutu `3.9cqw`), altta %3 pay (panelin köşe kesiği son butonun çerçevesini kesmesin). ≤700 px'te kart `top:78%` (640 px'lik alanın içinde, 499–607 px) |
+| Değişmeyen | Tasarım, renkler, buton içerikleri, menü eylemleri, "Nasıl oynanır" metni. Butonlar en az 50 px yüksek |

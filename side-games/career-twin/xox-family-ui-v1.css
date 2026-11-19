@@ -325,3 +325,11 @@ body[data-ct-screen="game"] .statValue{font-size:clamp(10px,2cqw,15px)}
 body[data-ct-screen="game"] .searchHead span{font-size:clamp(9px,1.75cqw,13px)}
 body[data-ct-screen="game"] .statRow{min-height:34px}
 @media(max-width:345px){body[data-ct-screen="game"] .scoreState{display:none}}
+/* QA UX-08: the mode list starts below the "OYUN MODU" title (it was drawn under the first button),
+   and on short phones, where the panel is taller, the help card sits below the panel instead of over RAKİP ARA. */
+body:is([data-ct-screen="menu"],[data-ct-screen="create"],[data-ct-screen="join"]) .modeGrid{
+  inset:calc(6.5% + 3.9cqw + 9px) 0 3%;height:auto;
+}
+@media(max-height:700px){
+  body[data-ct-screen="menu"] .howPanel{top:78%}
+}
