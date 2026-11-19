@@ -15,10 +15,12 @@ const loader = fs.readFileSync(
   'utf8'
 );
 
-assert.match(
-  loader,
-  /online-base44-imposter\.js\?v=20260911-guest-render-v1/,
-  'the game loader must invalidate the cached realtime transport'
+// The loader must request a transport build at least as new as the guest-render fix (2026-09-11);
+// later cache tags (e.g. 20260928-...) also satisfy this.
+const transportVersion = (loader.match(/online-base44-imposter\.js\?v=(\d{8})/) || [])[1] || '';
+assert.ok(
+  transportVersion >= '20260911',
+  'the game loader must invalidate the cached realtime transport (got v=' + transportVersion + ')'
 );
 
 const snapshot = {

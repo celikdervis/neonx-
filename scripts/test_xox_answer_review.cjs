@@ -10,6 +10,12 @@ function element(tag, cls, html) {
     get childElementCount() { return this.children.length; }};
 }
 const players = JSON.parse(fs.readFileSync('side-games/data/master/xox-players.json'));
+// The page applies verified corrections (xox-data-integrity-v1.js) before the game sees the pool;
+// apply them with the same product function so the fixture matches what players get.
+const integrity = fs.readFileSync('side-games/football-xox/xox-data-integrity-v1.js', 'utf8');
+const mergeSrc = integrity.slice(integrity.indexOf('  function mergeVerifiedCorrections('), integrity.indexOf('  window.fetch = async function'));
+const corrections = JSON.parse(fs.readFileSync('side-games/data/master/xox-player-corrections.json'));
+vm.runInNewContext(mergeSrc + '\nmergeVerifiedCorrections(players, corrections);', {players, corrections});
 const context = vm.createContext({PLAYERS: players, E: element, B: (text, primary, onclick) => Object.assign(element('button'), {textContent:text, onclick}), esc: value => value});
 vm.runInContext(source.slice(source.indexOf('  function matches('), source.indexOf('  function conditionKey(')) + source.slice(source.indexOf('  let revealedAnswerRound'), source.indexOf('  function renderGame(')), context);
 const game = {over: true, matchRound: 'test-1', used: [], board: Array(9).fill(null), challenge: {rows: Array(3).fill({type:'nationality',value:'İtalya'}),cols: Array(3).fill({type:'club',value:'Tottenham Hotspur'})}};

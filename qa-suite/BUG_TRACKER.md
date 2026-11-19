@@ -123,7 +123,7 @@ orijinal sonuç üzerinde etkisiz (yine 2/2 FAIL).
 |---|---|---|---|---|
 | UX-01 | XOX menü (390×844) | "OYUN MODU" başlığının ilk harfi kartın sol kenarında kırpılıyor (`explore-xox` ekran görüntüsü) | P4 | NOT TESTED (sistematik mobil tur yapılmadı) |
 | OBS-01 | Parti ayrılma | Ayrılma iki transaction'dan oluşuyor (önce parti düğümü, sonra kullanıcının işaretçisi). Arada kopma olursa bayat işaretçi kalabilir; bu durum `currentPartyMembership`/`validPartyFor` ile kendiliğinden düzeliyor. Ana sayfadaki yöntemle aynı | — | Bilgi |
-| OBS-02 | Mevcut testler | `scripts/test_imposter_realtime_render.cjs` ve `scripts/test_xox_answer_review.cjs` bu çalışmadan önce de FAIL veriyordu | P3 | Bu çalışmada incelenmedi |
+| OBS-02 | Mevcut testler | `scripts/test_imposter_realtime_render.cjs` ve `scripts/test_xox_answer_review.cjs` bu çalışmadan önce de FAIL veriyordu | P3 | **Çözüldü (test kaynaklı, ürün hatası değil).** Imposter: test eski bir önbellek etiketini (`?v=20260911-guest-render-v1`) birebir arıyordu; sayfa sonradan `20260928-...`'e geçmiş. Etiket gevşetilince davranış testi geçiyor; test artık 2026-09-11 veya sonrası tarihli etiketi kabul ediyor. XOX: test ham oyuncu dosyasını okuyordu; sayfa ise `xox-player-corrections.json` düzeltmelerini çalışma anında uyguluyor (Tonali → Tottenham). Test artık aynı ürün fonksiyonuyla (`mergeVerifiedCorrections`) düzeltmeleri uyguluyor. İkisi de PASS |
 | OBS-03 | Mevcut testler | `scripts/` testlerinin çoğu "kaynakta şu metin var mı" kontrolü yapıyor; B-01 ve B-02'yi yakalamadılar | — | Bilgi |
 
 ---
