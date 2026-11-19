@@ -97,3 +97,33 @@ test('R-10 the step header tells both players whose move it is, in every phase',
   for (const u of [A, B]) await expect(u.page.locator('#step-title')).toHaveText('B oyuncusu ters sesi taklit ediyor');
   for (const u of [A, B]) await expect(u.page.locator('#step-desc')).not.toContainText('paylaş');
 });
+
+test('R-11 live level meter while recording; ?micdebug=1 shows permission, context, track and last take', async ({ users, rtdb }) => {
+  const A = await users('A', { device: 'iPhone 14', profile: false });
+  await A.context.addInitScript(() => { window.SpeechRecognition = window.webkitSpeechRecognition = undefined; });
+  await A.page.goto('/side-games/reverse-xi/index.html?micdebug=1');
+  const B = await open(users, 'B', 'iPhone 14');
+  await A.page.waitForFunction(() => window.__NX_MOCK_NET__?.connected);
+  await startRoom(rtdb, A, B);
+  await A.page.locator('#record-name').click();
+  await expect.poll(() => A.page.locator('#record-name').evaluate(b => parseFloat(getComputedStyle(b).getPropertyValue('--nx-level') || '0')), { timeout: 5000 }).toBeGreaterThan(0.05);
+  await A.page.waitForTimeout(800);
+  await A.page.locator('#record-name').click();
+  await expect(A.page.locator('#heard-result')).toBeVisible();
+  const panel = await A.page.locator('#nx-mic-debug').textContent();
+  for (const key of ['platform: iOS', 'audioContext: running', 'track: live', 'lastTake: name']) expect(panel).toContain(key);
+  expect(await A.page.locator('#record-name').evaluate(b => getComputedStyle(b).getPropertyValue('--nx-level').trim())).toBe('0.000');
+});
+
+test('R-12 party launch: host and guest join the same room automatically (nxAuto)', async ({ users, rtdb }) => {
+  const q = (role, name) => `/side-games/reverse-xi/index.html?nxAuto=1&nxRole=${role}&nxCode=QA7RVS&nxPartySize=2&nxName=${name}`;
+  const A = await users('A', { profile: false }), B = await users('B', { profile: false });
+  await A.page.goto(q('host', 'Lider'));
+  await waitForDb(rtdb, 'reverseXI/rooms/QA7RVS/players/A', v => v?.name === 'Lider');
+  await B.page.goto(q('guest', 'Uye'));
+  await waitForDb(rtdb, 'reverseXI/rooms/QA7RVS/players/B', v => v?.name === 'Uye');
+  for (const u of [A, B]) { await expect(u.page.locator('#game')).toBeVisible(); await expect(u.page.locator('#room-label')).toHaveText('QA7RVS'); }
+  await expect(A.page.locator('#speaker-panel')).toBeVisible();
+  await expect(B.page.locator('#waiting-panel')).toBeVisible();
+  await expect(B.page.locator('#name-a')).toHaveText('Lider');
+});

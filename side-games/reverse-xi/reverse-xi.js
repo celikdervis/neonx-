@@ -66,11 +66,29 @@ function openRoom(){$('intro').hidden=true;$('game').hidden=false;$('room-label'
 // because iOS only lets audio start during a user gesture.
 const MIC_RATE=22050,MIC_MAX_SECONDS=15,MIC_MIN_SECONDS=.3,MIC_SILENCE_PEAK=.01,MIC_RESUME_TIMEOUT=4000;
 const mic={stream:null,ctx:null,capture:null,starting:false,cancelledInBackground:false};
+// Real-device diagnostics: open the page with ?micdebug=1 to show a live panel
+// (permission, AudioContext, track, level, last error) that testers can screenshot.
+// It never takes taps (pointer-events:none), so the game stays playable under it.
+const MIC_DEBUG=new URLSearchParams(location.search).get('micdebug')==='1',micInfo={};
+function micDiag(key,value){
+ micInfo[key]=value;
+ if(!MIC_DEBUG)return;
+ let panel=document.getElementById('nx-mic-debug');
+ if(!panel){panel=document.createElement('pre');panel.id='nx-mic-debug';panel.style.cssText='position:fixed;left:6px;right:6px;top:max(6px,env(safe-area-inset-top));z-index:99999;max-height:28vh;overflow:hidden;margin:0;padding:6px 8px;border:1px solid #cfff35;border-radius:10px;background:rgba(2,7,5,.88);color:#dfffb0;font:10px/1.3 ui-monospace,Menlo,monospace;white-space:pre-wrap;word-break:break-all;pointer-events:none';document.body.appendChild(panel)}
+ const order=['permission','audioContext','track','lastTake','lastUpload','lastError','visibility','platform','apis','ua'];
+ panel.textContent='RE:VERSE MIC DEBUG\n'+order.filter(k=>k in micInfo).map(k=>k+': '+micInfo[k]).join('\n');
+}
+function micDiagError(where,error){micDiag('lastError',where+' · '+(error?.name||'')+' · '+(error?.message||error))}
+micDiag('ua',navigator.userAgent);micDiag('platform',(isIOSAudio()?'iOS':/Android/i.test(navigator.userAgent||'')?'Android':'other')+' · mobile='+isMobileAudio()+' · secure='+window.isSecureContext);
+micDiag('apis','mediaDevices='+!!navigator.mediaDevices?.getUserMedia+' · AudioContext='+!!(window.AudioContext||window.webkitAudioContext)+' · SpeechRecognition='+!!(window.SpeechRecognition||window.webkitSpeechRecognition));
+navigator.permissions?.query?.({name:'microphone'}).then(p=>{micDiag('permission',p.state);p.onchange=()=>micDiag('permission',p.state)}).catch(()=>micDiag('permission','unavailable'));
+function setLevel(button,level){button.style.setProperty('--nx-level',level.toFixed(3))}
 function isIOSAudio(){return /iPhone|iPad|iPod/.test(navigator.userAgent||'')||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)}
 // On phones the speech recognizer and the recorder compete for the single
 // microphone; running both leaves one of them with silence.
 function isMobileAudio(){return isIOSAudio()||/Android/i.test(navigator.userAgent||'')}
 function micError(error){
+ micDiagError('getUserMedia',error);
  const name=error?.name||'',ios=isIOSAudio();
  const text=name==='NotAllowedError'||name==='SecurityError'||name==='PermissionDeniedError'
   ?(ios?'Mikrofon izni verilmedi. Safari\'de adres çubuğundaki "aA" › Web Sitesi Ayarları › Mikrofon › İzin Ver adımlarını izleyip tekrar dene.':'Mikrofon izni verilmedi. Adres çubuğundaki kilit simgesinden mikrofona izin verip tekrar dene.')
@@ -83,7 +101,8 @@ function micError(error){
 function audioContext(){
  const AC=window.AudioContext||window.webkitAudioContext;
  if(!AC)throw micError({name:'Unsupported'});
- if(!mic.ctx||mic.ctx.state==='closed')mic.ctx=new AC();
+ if(!mic.ctx||mic.ctx.state==='closed'){mic.ctx=new AC();mic.ctx.onstatechange=()=>micDiag('audioContext',mic.ctx.state+' @ '+mic.ctx.sampleRate+' Hz')}
+ micDiag('audioContext',mic.ctx.state+' @ '+mic.ctx.sampleRate+' Hz');
  return mic.ctx;
 }
 function trackUsable(track){return !!track&&track.readyState==='live'&&track.enabled&&!track.muted}
@@ -97,11 +116,13 @@ async function getStream(){
  const track=stream.getAudioTracks()[0];
  if(!track){stream.getTracks().forEach(t=>t.stop());throw micError({name:'NotFoundError'})}
  // iOS ends or mutes capture on calls, Siri and backgrounding; never reuse such a track.
- track.addEventListener('ended',()=>{if(mic.stream===stream)mic.stream=null;if(mic.capture?.stream===stream)abortCapture('Mikrofon bağlantısı kesildi. Kaydı tekrar başlat.')});
+ const trackInfo=e=>{const t=track.getSettings?.()||{};micDiag('track',(e?e+' · ':'')+track.readyState+(track.muted?' · MUTED':'')+' · '+(track.label||'mic').slice(0,32)+' · '+(t.sampleRate||'?')+' Hz · ec='+t.echoCancellation+' ns='+t.noiseSuppression+' agc='+t.autoGainControl)};
+ trackInfo();track.addEventListener('mute',()=>trackInfo('mute'));track.addEventListener('unmute',()=>trackInfo('unmute'));
+ track.addEventListener('ended',()=>{trackInfo('ended');if(mic.stream===stream)mic.stream=null;if(mic.capture?.stream===stream)abortCapture('Mikrofon bağlantısı kesildi. Kaydı tekrar başlat.')});
  mic.stream=stream;return stream;
 }
 function recordButton(mode){return $(mode==='name'?'record-name':'record-imitation')}
-function resetRecordButton(button){button.classList.remove('recording');button.textContent='🎙 KAYDI BAŞLAT'}
+function resetRecordButton(button){button.classList.remove('recording');button.textContent='🎙 KAYDI BAŞLAT';setLevel(button,0)}
 function startSpeech(){
  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
  if(!SR||isMobileAudio())return;
@@ -120,10 +141,11 @@ async function startCapture(mode){
   await Promise.race([resumed,new Promise(resolve=>setTimeout(resolve,MIC_RESUME_TIMEOUT))]).catch(()=>{});
   if(ctx.state!=='running')throw new Error('Ses sistemi başlatılamadı. Mikrofon tuşuna tekrar dokun.');
   const source=ctx.createMediaStreamSource(stream),processor=ctx.createScriptProcessor(4096,1,1);
-  const capture={mode,button,stream,source,processor,chunks:[],frames:0,rate:ctx.sampleRate,second:0};
+  const capture={mode,button,stream,source,processor,chunks:[],frames:0,rate:ctx.sampleRate,second:0,level:0};
   processor.onaudioprocess=e=>{
    if(mic.capture!==capture)return;
    const data=e.inputBuffer.getChannelData(0);capture.chunks.push(new Float32Array(data));capture.frames+=data.length;
+   let sum=0;for(let i=0;i<data.length;i+=4)sum+=data[i]*data[i];capture.level=Math.max(Math.min(1,Math.sqrt(sum/(data.length/4))*7),capture.level*.75);setLevel(button,capture.level);
    e.outputBuffer.getChannelData(0).fill(0);
    const second=Math.floor(capture.frames/capture.rate);
    if(second!==capture.second){capture.second=second;button.textContent='■ KAYDI DURDUR · '+second+' sn'}
@@ -155,11 +177,12 @@ function stopCapture(){
  mic.capture=null;stopSpeech();detachCapture(c);state.recordingMode='';resetRecordButton(c.button);
  const pcm=capturedPcm(c);
  let peak=0;for(let i=0;i<pcm.length;i++){const v=Math.abs(pcm[i]);if(v>peak)peak=v}
+ micDiag('lastTake',c.mode+' · '+(pcm.length/MIC_RATE).toFixed(2)+' s · peak '+peak.toFixed(3)+' · captured at '+c.rate+' Hz');
  if(pcm.length<MIC_RATE*MIC_MIN_SECONDS){toast('Kayıt çok kısa. Biraz daha uzun konuşup tekrar dene.');return}
  if(peak<MIC_SILENCE_PEAK){toast('Ses algılanmadı. Mikrofonun açık olduğundan ve başka bir uygulamanın kullanmadığından emin olup tekrar dene.');return}
  finishRecording(pcm,c.mode);
 }
-function reversedDataUrl(pcm){const out=new Float32Array(pcm.length);for(let i=0;i<pcm.length;i++)out[pcm.length-1-i]=pcm[i];return blobData(encodeWav(out,MIC_RATE))}
+async function reversedDataUrl(pcm){const out=new Float32Array(pcm.length);for(let i=0;i<pcm.length;i++)out[pcm.length-1-i]=pcm[i];const url=await blobData(encodeWav(out,MIC_RATE));micDiag('lastUpload',Math.round(url.length/1024)+' KB data URL');return url}
 function finishRecording(pcm,mode){
  if(mode==='name'){
   state.originalPcm=pcm;const transcript=state.transcript.trim(),typed=isMobileAudio()&&!transcript;
@@ -175,13 +198,14 @@ async function toggleRecording(mode){
  if(mic.starting)return;
  if(state.recordingMode===mode){stopCapture();return}
  if(state.recordingMode){toast('Önce devam eden kaydı durdur.');return}
- try{await startCapture(mode)}catch(e){abortCapture();toast(e.message||'Mikrofon açılamadı.')}
+ try{await startCapture(mode)}catch(e){if(!e?.code)micDiagError('startCapture',e);abortCapture();toast(e.message||'Mikrofon açılamadı.')}
 }
 function encodeWav(samples,rate){const b=new ArrayBuffer(44+samples.length*2),v=new DataView(b);const write=(o,s)=>[...s].forEach((c,i)=>v.setUint8(o+i,c.charCodeAt(0)));write(0,'RIFF');v.setUint32(4,36+samples.length*2,true);write(8,'WAVE');write(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,rate,true);v.setUint32(28,rate*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);write(36,'data');v.setUint32(40,samples.length*2,true);for(let i=0;i<samples.length;i++)v.setInt16(44+i*2,Math.max(-1,Math.min(1,samples[i]))*32767,true);return new Blob([b],{type:'audio/wav'})}
 function blobData(blob){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(blob)})}
 // Backgrounding interrupts capture on iOS and Android: cancel the take and free
 // the microphone (also turns the system mic indicator off); re-acquire on next tap.
 document.addEventListener('visibilitychange',()=>{
+ micDiag('visibility',document.visibilityState+' @ '+new Date().toLocaleTimeString());
  if(document.visibilityState==='hidden'){if(mic.capture){abortCapture();mic.cancelledInBackground=true}releaseMicrophone();return}
  if(mic.cancelledInBackground){mic.cancelledInBackground=false;toast('Uygulama arka plana alındığı için kayıt iptal edildi. Kaydı yeniden başlat.')}
 });

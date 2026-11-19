@@ -64,3 +64,13 @@ bu sürüm dizelerinin güncellenmesi önerilir. Bu çalışmada HTML dosyaları
 | `side-games/football-xox/xox-board-motion.js` | Sığdırma: metnin gerçek genişliği (Range) sabit kutuya (`.head`/`.cell`) göre, dönüşümden bağımsız; diğer katmanlar boyutu `!important` ile sabitlediği için `setProperty(...,'important')`; tahta değişince (MutationObserver, yalnızca tahta), boyut değişince (ResizeObserver) ve web yazı tipi yüklenince yeniden. Oyun bitince sonuç kartını görünür alana kaydırma |
 | `side-games/football-xox/index.html` | Değişen üç dosyanın `?v=` önbellek etiketleri |
 | Oyun mantığı (`game-v2.js`) | **Değişmedi** |
+
+## FIX-06 → RE:VERSE gerçek cihaz testine hazırlık
+
+| | |
+|---|---|
+| Seviye göstergesi | Kayıt sırasında butonun altında sesle dolan neon çizgi (`--nx-level`, yakalama döngüsünden). Hareket azaltma tercihine uyar |
+| Tanı paneli | `?micdebug=1`: izin, AudioContext, iz (MUTED dahil), son kayıt, son yükleme, son hata, görünürlük, platform, API'ler, UA. Üstte, `pointer-events:none` (ilk sürüm alttaydı ve oyunun butonlarını kapatıyordu; R-11 bunu yakaladı) |
+| Bildirim mesajı | Alttan üste taşındı; "Kayıt başladı" mesajı kayıt/durdur butonunu örtüyordu |
+| Testler | R-11 (gösterge + panel), R-12 (partiden `nxAuto` ile lider/üye aynı odaya otomatik giriş) |
+| Dosyalar | `side-games/reverse-xi/reverse-xi.js`, `reverse-xi.css`, `index.html` (`?v=` etiketleri) |

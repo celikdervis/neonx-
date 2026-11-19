@@ -71,8 +71,13 @@ gönderilirse büyük olasılıkla reddedilir veya bazı akışlar uygulama içi
 
 ## RE:VERSE — gerçek cihazda yapılması gereken testler
 
-Chromium'da otomatik testlerle doğrulananlar: B-04 düzeltmesi, 16 test × 5 tekrar. Aşağıdakiler ise yalnızca gerçek
-cihazda doğrulanabilir; **hiçbiri test edilmedi**.
+Chromium'da otomatik testlerle doğrulananlar: B-04 düzeltmesi, seviye göstergesi, tanı paneli ve parti ile otomatik giriş
+(18 test × 5 tekrar). Aşağıdakiler ise yalnızca gerçek cihazda doğrulanabilir; **hiçbiri test edilmedi**.
+
+**Test eden kişi için:** sayfayı `…/side-games/reverse-xi/index.html?micdebug=1` adresiyle açın. Ekranın üstünde dokunuşları
+engellemeyen bir panel görünür: izin durumu, AudioContext (durum, Hz), mikrofon izi (live/MUTED, cihaz, Hz, ec/ns/agc),
+son kayıt (süre, tepe seviyesi), son yükleme boyutu, son hata (ad ve mesaj) ve görünürlük olayları. Her adımda panelin
+ekran görüntüsünü alın. Kayıt sırasında butonun altındaki neon çizgi sesle birlikte hareket etmiyorsa mikrofon ses almıyor demektir.
 
 | # | Cihaz / tarayıcı | Adım | Beklenen |
 |---|---|---|---|
