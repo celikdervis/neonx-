@@ -182,3 +182,15 @@ yüklenemezse başlıklar Times benzeri serif yazı tipiyle görünüyordu. Yede
 | UX-04 | Kazanan çizgi isimlerin üstünden geçip onları üstü çizili gösteriyordu | Çizgi kare dolgusunun üstünde, isimlerin altında; isimlere koyu hale; çizgi tamamlanınca kazanan kareler bir kez parlıyor (`prefers-reduced-motion`'a uyar) | X-01 (z-sırası ve `isolation`) + görsel (`evidence/xox-before-after-iphone-se.png`) |
 | UX-05 | Maç bitince "OYUNCU 1 KAZANDI" kartı alt çubuğun arkasında kalıyordu | Oyun bitince (kazanma veya beraberlik) kart, alt çubuğun üstünde görünecek şekilde kaydırılıyor | X-01 |
 | — | Menüde "FUTBOL XOX" başlığının amblemle çakışması | **Hata değil:** test ortamında Google Fonts engelli olduğu için yedek yazı tipinden kaynaklanıyordu; gerçek yazı tipiyle çakışma yok. Yavaş ağda yazı tipi gelene kadar (`display=swap`) görülebilir → yazı tiplerinin uygulamaya paketlenmesi önerisi | Gerçek yazı tipiyle ölçüm |
+
+## Diğer oyunlar — mobil düzen değerlendirmesi (gerçek yazı tipleriyle)
+
+| ID | Oyun | Bulgu | Etki | Durum |
+|---|---|---|---|---|
+| UX-06 | EN11 | "← YAN OYUNLAR" geri bağlantısının dokunma alanı 121×16 px (WCAG 24 px altı) | Parmakla isabet zor | **FIXED**: görünüm aynı, dokunma alanı 109×44 px (`games-touch.spec.mjs`) |
+| UX-07 | Football Wordle | 375×667 (iPhone 8/SE 2-3) ve 375×812 (13 mini) ekranlarda klavye açılışta alt çubuğun altında: iPhone 8'de 8 tuş, 13 mini'de 27 tuşun 27'si. Kaydırınca erişilebiliyor. Galaxy S8 / Pixel 7 / 14 Pro Max'te sorun yok. Başlık "FOOTBALL WORDLE" iki boyutta kesiliyor | Her tahminde kaydırma | **ÖNERİ (onay bekliyor)**: Ya oyun ekranında ortak alt çubuğu gizlemek ya da tahtayı ekran yüksekliğine göre küçültmek. Ölçüme dayalı bir küçültme denendi; alt çubuğun saydam üst kısmı yüzünden Galaxy S8'de gereksiz küçülme yaptı ve **geri alındı** |
+| UX-08 | Career Twin | 375×667'de "NASIL OYNANIR?" kartı "RAKİP ARA" butonunun üstüne biniyor; "OYUN MODU" etiketi kartın arkasında. 360×740'ta sorun yok | Üçüncü mod butonu kısmen kapalı | **ÖNERİ (onay bekliyor)**: Menü sabit yüzdelerle konumlandırılmış; kısa ekranlarda "Nasıl oynanır" kartını kaydırılabilir akışa almak |
+| — | Imposter, XOX menüsü | Başlık/amblem çakışması | — | **Hata değil** (yazı tipi yüklenmeyince oluşuyor) |
+| — | Tüm sayfalar | Yatay taşma yok; güvenli alan (çentik) destekli; XOX, Wordle, Imposter ve Nasıl Oynanır'da yakınlaştırma kapalı (`user-scalable=no`) | Erişilebilirlik notu | Bilgi |
+
+Kanıt: `evidence/layout-twin-wordle-375x667-360x740.png`. Denetim aracı: `perf/mobile-audit.mjs`.
