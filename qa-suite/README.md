@@ -33,6 +33,10 @@ FIREBASE_SDK_DIR=<firebase@12.16.0 kurulu klasör> npx playwright test -c qa-sui
 ```
 
 `FIREBASE_SDK_DIR` verilmezse karşılaştırma testi **skipped** olarak raporlanır, PASS sayılmaz.
+
+Görsel testlerde üretimdeki yazı tiplerini kullanmak için `QA_FONTS_DIR=<@fontsource klasörü>` verin
+(`npm i @fontsource/rajdhani @fontsource/orbitron @fontsource/barlow @fontsource/barlow-condensed` ile proje dışına kurulur).
+Verilmezse Google Fonts engellenir ve sayfalar yedek yazı tipiyle çizilir.
 Ham çıktılar `qa-suite/.artifacts/` altına yazılır ve git'e eklenmez.
 
 ## Performans ölçümü

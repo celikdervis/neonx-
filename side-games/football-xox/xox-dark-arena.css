@@ -604,6 +604,10 @@ body[data-ct-screen="game"] .btn.primary:not(.newBoardBtn){
   border-color:var(--arena-lime)!important;
 }
 body[data-ct-screen="game"] .modal{
+  /* Above the shared bottom navigation (#nx-arcade-footer, z-index 9000): the
+     player picker is modal and its result list must stay tappable. */
+  z-index:9600!important;
+  padding-bottom:max(12px,env(safe-area-inset-bottom))!important;
   background:rgba(0,4,2,.76)!important;
   backdrop-filter:blur(10px)!important;
 }

@@ -16,6 +16,23 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 export const ROOT = path.resolve(HERE, '../..');
 const MOCK_DIR = path.join(HERE, 'mock-modules');
 const FIREBASE_SDK = /^https:\/\/www\.gstatic\.com\/firebasejs\/12\.16\.0\/(firebase-app|firebase-auth|firebase-database|rtdb-shared)\.js(\?.*)?$/;
+// Optional: serve the Google Fonts the pages request from local @fontsource
+// packages (same OFL fonts) so screenshots use the production typefaces.
+// QA_FONTS_DIR=<dir containing @fontsource/{rajdhani,orbitron,barlow,barlow-condensed}>
+const FONTS_DIR = process.env.QA_FONTS_DIR;
+function googleFontsCss(url) {
+  const q = new URL(url), out = [];
+  for (const fam of q.searchParams.getAll('family')) {
+    const [name, spec = ''] = fam.split(':'), slug = name.trim().toLowerCase().replace(/\s+/g, '-');
+    const axes = spec.split('@')[0].split(','), values = (spec.split('@')[1] || '400').split(';');
+    for (const v of values) {
+      const parts = v.split(','), ital = axes.includes('ital') ? parts[axes.indexOf('ital')] === '1' : false, w = parts[axes.indexOf('wght')] ?? parts[0];
+      const file = path.join(FONTS_DIR, slug, `${w}${ital ? '-italic' : ''}.css`);
+      if (fs.existsSync(file)) out.push(fs.readFileSync(file, 'utf8').replace(/url\(\.\/files\/([^)]+)\)/g, `url(https://fonts.gstatic.com/qa/${slug}/$1)`));
+    }
+  }
+  return out.join('\n');
+}
 
 export const usernameKey = (s) => String(s || '').toLocaleLowerCase('tr-TR').normalize('NFD')
   .replace(/[̀-ͯ]/g, '').replace(/ı/g, 'i').replace(/[^a-z0-9_]/g, '').slice(0, 20);
@@ -72,6 +89,9 @@ export const test = base.extend({
           return route.fulfill({ status: 200, contentType: 'text/javascript; charset=utf-8', headers: { 'access-control-allow-origin': '*' }, body: fs.readFileSync(path.join(MOCK_DIR, m[1] + '.js'), 'utf8') });
         }
         const host = new URL(url).hostname;
+        if (FONTS_DIR && host === 'fonts.googleapis.com') return route.fulfill({ status: 200, contentType: 'text/css', headers: { 'access-control-allow-origin': '*' }, body: googleFontsCss(url) });
+        const fm = FONTS_DIR && url.match(/^https:\/\/fonts\.gstatic\.com\/qa\/([a-z-]+)\/([^?]+)$/);
+        if (fm && fs.existsSync(path.join(FONTS_DIR, fm[1], 'files', fm[2]))) return route.fulfill({ status: 200, contentType: 'font/woff2', headers: { 'access-control-allow-origin': '*' }, body: fs.readFileSync(path.join(FONTS_DIR, fm[1], 'files', fm[2])) });
         if (host === '127.0.0.1' || host === 'localhost' || url.startsWith('data:') || url.startsWith('blob:')) return route.continue();
         u.blocked.push(url);
         return route.abort('blockedbyclient');

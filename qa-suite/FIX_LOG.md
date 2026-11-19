@@ -54,3 +54,13 @@ bu sürüm dizelerinin güncellenmesi önerilir. Bu çalışmada HTML dosyaları
 | `side-games/neon-entry-v1.js/.css` | Giriş görseli aynı yöntemle WebP; PNG yolu ve sözleşme testi korunuyor |
 | Yeni dosyalar | `neon-xi-background-v4.webp` (q82, 146 KB), `neon-xi-foreground-ice-v5.webp` (q90, alfa 100, 282 KB), `assets/entry/first-login-v1.webp` (q90, 287 KB) — aynı çözünürlük |
 | Draft dosyaları | Dokunulmadı |
+
+## FIX-05 → B-06, UX-03..05 (Futbol XOX sunumu)
+
+| Dosya | Değişiklik |
+|---|---|
+| `side-games/football-xox/xox-dark-arena.css` | Oyuncu seçme penceresi alt çubuğun üstünde (`z-index:9600`) + alt güvenli alan |
+| `side-games/football-xox/xox-board-motion.css` | Tahta `isolation:isolate`; ad/başlıkta kelime bölme kapalı; kazanan karede çizgi isimlerin altında, isim hâlesi, tek seferlik parlama; dar ekranda başlık iç boşluğu |
+| `side-games/football-xox/xox-board-motion.js` | Sığdırma: metnin gerçek genişliği (Range) sabit kutuya (`.head`/`.cell`) göre, dönüşümden bağımsız; diğer katmanlar boyutu `!important` ile sabitlediği için `setProperty(...,'important')`; tahta değişince (MutationObserver, yalnızca tahta), boyut değişince (ResizeObserver) ve web yazı tipi yüklenince yeniden. Oyun bitince sonuç kartını görünür alana kaydırma |
+| `side-games/football-xox/index.html` | Değişen üç dosyanın `?v=` önbellek etiketleri |
+| Oyun mantığı (`game-v2.js`) | **Değişmedi** |
