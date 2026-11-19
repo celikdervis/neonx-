@@ -76,4 +76,5 @@ Ağ kopması, `window.__NX_MOCK_NET__.drop()/restore()` ile yalnızca o kullanı
 | `SECURITY_BACKLOG.md` | Bu çalışmaya dahil edilmeyen güvenlik riskleri |
 | `PERFORMANCE_REPORT.md` | Performans ölçümleri, darboğazlar, önce/sonra takibi |
 | `ARCHITECTURE_AUDIT.md` | Açılış zinciri, çekirdek içeriği, script envanteri, tekrarlar, hedef mimari |
-| `evidence/` | Kare görüntüleri (film şeridi) |
+| `MOBILE_APP_READINESS.md` | App Store / Google Play hazırlığı (Capacitor), engeller, RE:VERSE cihaz test listesi |
+| `evidence/` | Kare görüntüleri, önce/sonra karşılaştırmaları |

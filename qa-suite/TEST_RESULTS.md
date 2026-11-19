@@ -56,3 +56,22 @@ kontrolleri) yukarıdaki sayılara dahil değildir; bunlar `BUG_TRACKER.md` içi
 | test_social_system, test_social_drawer_integrity, test_social_identity_sync, test_party_membership_integrity, test_social_consistency, test_runtime_hygiene, test_core_patch_contracts, test_xox_data_integrity | PASS |
 | test_arcade_navigation, test_neon_entry, test_home_hotspots | PASS |
 | test_imposter_realtime_render, test_xox_answer_review | FAIL (bu çalışmadan önce de FAIL; bkz. OBS-02) |
+
+
+---
+
+# Test Results — Tur 3 (RE:VERSE, mobil/performans, XOX), 2026-11-19
+
+Ortam aynı: mock RTDB + Chromium. Görsel testler gerçek yazı tipleriyle (`QA_FONTS_DIR`) ve yedek yazı tipiyle ayrı ayrı çalıştırıldı.
+
+| Test | Çalıştırma | PASS | FAIL | Not |
+|---|---|---|---|---|
+| RE:VERSE R-01…R-10, R-02b (16 test) | 5 tekrar + son regresyon | 80 + 16 | 0 | Orijinal koda karşı: 11 FAIL / 4 PASS (ayırt edici) |
+| XOX X-01 (3 cihaz), X-02 (20 tahta) | 5 tekrar + yedek yazı tipi + son regresyon | 20 + 4 + 4 | 0 | Orijinal kodda X-01 oyuncu seçimi 3/3 cihazda tıklanamıyordu |
+| EN11 G-01 dokunma alanı | 1 + son regresyon | 2 | 0 | |
+| Tüm paket (son regresyon) | 1 | 46 | 1 | Tek FAIL: M-07 = açık B-03 |
+
+Performans (orta seviye mobil, soğuk, n=3): ana ekran görselleri 48,1 → 21,3 sn; yeni kullanıcı giriş 60,5 → 22,0 sn;
+yükleme ekranı 4 farklı ekrandan 1 ekrana; arkadan sızma 0 kare (bkz. PERFORMANCE_REPORT §9).
+
+Gerçek cihaz (iOS Safari, Android Chrome), gerçek Firebase ve gerçek izin pencereleri: **BLOCKED** (BLOCKED_TESTS.md).
