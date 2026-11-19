@@ -97,3 +97,23 @@ Ortam aynı: mock RTDB + Chromium. Sayılar bu turda gerçekten çalıştırıla
 | `scripts/` sosyal ve sözleşme testleri (10 adet) | 1 | 10 | 0 | test_imposter_realtime_render ve test_xox_answer_review bu turda çalıştırılmadı (önceden de FAIL) |
 
 Draft modunun eşleştirme iptali: **NOT TESTED** (kapsam dışı, kod değiştirilmedi).
+
+### Tur 4 — devam (performans, yerel varlıklar, görsel)
+
+| Test | Çalıştırma | PASS | FAIL | Not |
+|---|---|---|---|---|
+| S-01 splash yaşam döngüsü (yeni) | düzeltmeden sonra 1 + 5 | 6 | 0 | Düzeltmeden önce 1/1 FAIL (kaldırılmış katmanda 12 sn'de 287 çizim) |
+| F-01 yerel yazı tipleri, 8 sayfa (yeni) | 1 | 8 | 0 | Google Fonts isteği 0; beklenen aileler yüklü; Türkçe harfler latin-ext dosyasından |
+| PJ-01 PeerJS yerelden (yeni), 3 sayfa | 3 | 9 | 0 | unpkg isteği 0; EN11 yerel dosya 200 |
+| X-03 XOX panel etiketi (yeni), 3 cihaz | 3 (xox-visual × 3 = 21 test) | 9 | 0 | Orijinal CSS'te 3/3 FAIL |
+| G-02 EN11 yön düğmeleri dokunma alanı (yeni) | 5 | 5 | 0 | Orijinal sayfada 1/1 FAIL; ilk düzeltme denemesi (42 px) 3/3 FAIL verdi ve düzeltildi |
+| Mobil denetim (`perf/mobile-audit.mjs`) | 8 sayfa × 4 görünüm | — | — | Yatay taşma 0. Kalan uyarılar: Wordle klavye tuşları 27–43 px (telefon klavyesi standardı), Nasıl Oynanır'da 10 px altı yazılar, bazı sayfalarda yakınlaştırma kapalı |
+| Boşta CPU profili (`cpu-profile --idle 20 --runs 3`) | önce/sonra | — | — | Splash 28 → 0 ms; boşta CPU'nun %82'si dokunulmaz iki dosyada |
+
+### Son regresyon (tüm değişikliklerden sonra)
+
+| Paket | Sonuç |
+|---|---|
+| `qa-suite` tamamı, `FIREBASE_SDK_DIR` verilerek (15 dosya, 84 test) | **84/84 PASS**, 0 skipped |
+| `scripts/` altındaki 19 `test_*` + `validate_side_game_pools.py` | **20/20 PASS**. `test_side_game_pool_builders.py` yalnızca `duckdb` Python paketi kurulduktan sonra çalıştı (ortam eksiği). Önceden FAIL veren iki test eski test verisi nedeniyle düzeltildi (OBS-02) |
+| Draft testleri (`test_engine_mechanics`, `test_draft_tactical_balance`, `test_draft_readability`, `test_tactical_workshop`, `test_compositor_workshop`) | PASS (Draft koduna dokunulmadı; yalnızca doğrulama için çalıştırıldı) |

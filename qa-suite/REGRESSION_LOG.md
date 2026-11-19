@@ -32,3 +32,18 @@ FIX-02 için regresyon kapsamı:
 | Kopma ve yenileme sırasında kuyruk temizliği | M-04, M-05 | PASS |
 
 Mevcut `scripts/` testleri: değişiklikten önceki durumla aynı (yalnızca önceden de FAIL veren 2 test FAIL).
+
+
+---
+
+## Tur 4 regresyonu (2026-11-19)
+
+| Değişiklik | Etkilenebilecek akışlar | Yeniden çalıştırılan | Sonuç |
+|---|---|---|---|
+| FIX-08 Career Twin menüsü | Menü eylemleri, RAKİP ARA → sosyal panel | T-01 (7 profil), T-02, `test_runtime_hygiene`, `test_social_system`, `test_arcade_navigation` | PASS |
+| FIX-09 B-03 iptal transaction'ı | 1v1/Imposter eşleşme, iptal, kopma, yenileme, parti | M-01…M-10, B-01, B-02, P-01…P-12 (× 2), sosyal `scripts/` testleri | PASS |
+| FIX-10 splash | Ana ekran açılışı, Draft maç ön yükleyicisinin `show()` çağrısı | S-01 (tekrar gösterim dahil), tüm paket | PASS |
+| FIX-11 yerel yazı tipleri | Tüm yan sayfaların tipografisi, düzen testleri | F-01, X-01/02/03, W-01/02, T-01, G-01/02, R-01…R-12 | PASS |
+| FIX-12 PeerJS | EN11 oda kurma (kütüphane yükleme) | PJ-01 | PASS (P2P oyun BLOCKED) |
+| FIX-13 görsel/dokunma | XOX menüsü, EN11 parametre seçimi | X-03, G-02, xox-visual tamamı | PASS |
+| Son durum | — | Tüm paket 84/84, `scripts/` 20/20 | PASS |
