@@ -66,6 +66,7 @@ Yok. B-03 düzeltildi (M-06…M-10). Draft modunun iptal yolu kapsam dışı old
 
 | Dosya | İçerik |
 |---|---|
+| `FINAL_REPORT.md` | **Tek kapsamlı son rapor**: değişiklikler, çözülen sorunlar, dosyalar, testler, açık konular, commit'ler, mobil uygulama ilerlemesi |
 | `TEST_PLAN.md` | Kapsam, ortam, yöntem, öncelikler |
 | `TEST_RESULTS.md` | Çalıştırılan testler ve sayılar |
 | `BUG_TRACKER.md` | Hatalar (B-xx) ve gözlemler |

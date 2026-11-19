@@ -36,7 +36,7 @@ Bu rapor, dalın tamamını (Tur 1–4) özetler. Ayrıntılar: `BUG_TRACKER.md`
 | Eşleştirme | Imposter iptali yanlış kuyruğu siliyordu; düzeltildi | `9eb3fc5` |
 | Eşleştirme | **B-03:** yavaş bağlantıda iptal ile eşleşme çakışınca rakip boş odaya gidiyordu. İptal artık kendi kuyruk kaydında transaction; eşleşme önce geldiyse oyuncu eşleşmeye gidiyor. Yan sayfalar + ana sayfa; Draft modu hariç | `b4ff5bf` |
 | RE:VERSE | Mikrofon tek yakalama hattıyla yeniden kuruldu: iOS dokunuş kuralı, örnekleme, sessiz/kısa kayıt kontrolü, arka plana geçince mikrofonu bırakma, anlaşılır hata mesajları. Tur başlığı güncellenmiyordu; düzeltildi. Seviye göstergesi ve `?micdebug=1` tanı paneli eklendi | `6287df8`, `c168ec1`, `fb81292` |
-| Açılış | Tek opak yükleme ekranı (eskiden 4 farklı ekran ve arkadan sızma vardı). Ana ekran ve giriş görselleri WebP oldu (−5,1 MB) | `9254e1d` |
+| Açılış | Tek opak yükleme ekranı (eskiden 4 farklı ekran ve arkadan sızma vardı). Ana ekran ve giriş görselleri WebP oldu (−5.161 KB) | `9254e1d` |
 | Futbol XOX | Oyuncu seçme penceresi alt çubuğun üstüne alındı. Tahtada isimler okunur, kazanma çizgisi isimlerin altında, sonuç kartı görünür. Menü paneli "OYUN MODU" etiketi kırpılmıyor | `97b4dca`, `14d3b01` |
 | Football Wordle | Kısa telefonlarda klavye alt çubuğun altında kalıyordu; tahta sığdırıldı. Başlık artık kesilmiyor | `df7e5d0` |
 | Career Twin | "Nasıl oynanır" kartı kısa ekranlarda RAKİP ARA'yı kapatıyordu. "OYUN MODU" başlığı tüm boyutlarda ilk butonun arkasındaydı. İkisi de düzeltildi | `694da9d` |
@@ -65,7 +65,7 @@ Bu rapor, dalın tamamını (Tur 1–4) özetler. Ayrıntılar: `BUG_TRACKER.md`
 | UX-03…05 | XOX | Tahtada isim taşması, çizgi isimlerin üstünde, sonuç kartı görünmüyor | X-01/X-02 (20 tahta) |
 | UX-06 | EN11 | Geri bağlantısı 16 px yüksekliğinde | G-01 |
 | UX-07 | Wordle | iPhone 8/13 mini'de klavye alt çubuğun altında, başlık kesik | W-01/W-02, 7 cihaz |
-| UX-08 | Career Twin | Kart RAKİP ARA'yı kapatıyor, başlık butonun arkasında | T-01/T-02, 7 profil; orijinalde 7/7 FAIL |
+| UX-08 | Career Twin | Kart RAKİP ARA'yı kapatıyor, başlık butonun arkasında | T-01/T-02, 7 profil; orijinalde başlık çakışması 7/7, kart çakışması 3/7, RAKİP ARA 2 profilde tıklanamıyor |
 | UX-09 | XOX | "OYUN MODU" panelin kesik köşesinde kırpılıyor | X-03; orijinalde 3/3 FAIL |
 | UX-10 | EN11 | Yön düğmeleri 30 px yüksekliğinde | G-02; orijinalde FAIL |
 | UX-11 | Nasıl Oynanır, Imposter, RE:VERSE | Yazı tipi yedeği yok, yüklenirken serif görünüyor | Kod incelemesi + ekran görüntüsü |
@@ -104,7 +104,7 @@ Bu rapor, dalın tamamını (Tur 1–4) özetler. Ayrıntılar: `BUG_TRACKER.md`
 - `scripts/test_imposter_realtime_render.cjs`, `scripts/test_xox_answer_review.cjs`
 - `package.json`, `package-lock.json` (yalnızca `@playwright/test`)
 - `.gitignore`
-- `qa-suite/` (60 dosya: düzenek, 15 test dosyası, ölçüm araçları, belgeler, kanıt görüntüleri)
+- `qa-suite/` (~60 dosya: düzenek, 15 test dosyası, ölçüm araçları, belgeler, kanıt görüntüleri)
 
 ## 5. Çalıştırılan testler
 
