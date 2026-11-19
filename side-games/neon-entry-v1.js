@@ -8,7 +8,7 @@
   entry.innerHTML=[
     '<div class="nx-entry-check" role="status"><span class="nx-entry-spinner" aria-hidden="true"></span><span>OTURUM KONTROL EDİLİYOR</span></div>',
     '<div class="nx-entry-canvas">',
-      '<img class="nx-entry-art" alt="NEON XI futbol arenası, giriş seçenekleri ve nasıl oynanır düğmesi" decoding="async" draggable="false">',
+      '<picture class="nx-entry-picture"><source type="image/webp"><img class="nx-entry-art" alt="NEON XI futbol arenası, giriş seçenekleri ve nasıl oynanır düğmesi" decoding="async" draggable="false"></picture>',
       '<svg class="nx-entry-map" viewBox="0 0 941 1672" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" role="group" aria-label="NEON XI giriş seçenekleri">',
         '<a class="nx-entry-hotspot" href="#nasil-oynanir" data-entry-action="help" aria-label="Nasıl Oynanır?"><title>Nasıl Oynanır?</title><rect x="285" y="597" width="365" height="84" rx="17"/></a>',
         '<a class="nx-entry-hotspot" href="#google-ile-giris" data-entry-action="google" aria-label="Google ile giriş yap"><title>Google ile giriş yap</title><rect x="100" y="1235" width="730" height="117" rx="25"/></a>',
@@ -39,6 +39,8 @@
   const guide=entry.querySelector('#nxEntryGuide'),guideClose=guide.querySelector('.nx-entry-guide-close');
   const hotspots=[...entry.querySelectorAll('[data-entry-action]')];
   const artURL=new URL('./assets/entry/first-login-v1.png',document.baseURI).href;
+  // Same artwork and resolution as WebP (~87% smaller); the PNG stays as the fallback.
+  const artWebpURL=new URL('./assets/entry/first-login-v1.webp',document.baseURI).href,artSource=entry.querySelector('.nx-entry-picture source');
   let checked=false,authUser=null,busy=false,intent='',previousFocus=null;
   const timer=setTimeout(()=>{
     if(!checked){showWelcome();setStatus('Oturum kontrolü gecikti. Bağlantını kontrol edip sayfayı yenileyebilirsin.')}
@@ -57,7 +59,7 @@
     if(!art.getAttribute('src')){
       art.addEventListener('load',()=>{if(!entry.hidden)entry.dataset.phase='welcome'},{once:true});
       art.addEventListener('error',()=>{entry.dataset.phase='welcome';setStatus('Giriş görseli yüklenemedi. Sayfayı yenileyebilirsin.')},{once:true});
-      art.src=artURL;
+      artSource.srcset=artWebpURL;art.src=artURL;
     }
   }
   function hideWelcome(){

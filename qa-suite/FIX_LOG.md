@@ -44,3 +44,13 @@ bu sürüm dizelerinin güncellenmesi önerilir. Bu çalışmada HTML dosyaları
 | Hata mesajları | NotAllowed/Security → platforma özel izin yolu; NotFound → mikrofon yok; NotReadable/Abort → başka uygulama kullanıyor; mediaDevices yok veya NotSupported → "Safari veya Chrome'da aç" |
 | Kaldırılan ölü kod | `recognize()`, `captureName()` (hiçbir yerden çağrılmıyordu) |
 | Yükleme boyutu | iPhone'da 48 kHz → 22.050 Hz (aynı süre için ~2,2 kat küçük) |
+
+## FIX-04 → PERF-01, PERF-03, PERF-04 (yükleme ekranı ve görseller)
+
+| | |
+|---|---|
+| `index.html` | Boot yazısı ortada ve guard ile aynı stilde (sıçrama yok). Guard kuralı `html body::before` + `!important`, maske ve filtre sıfır; Draft'ın `body.nx-draft-active::before` kuralı ve çekirdeğin `mask-image`'ı artık örtüyü delemiyor. Nabız animasyonu yalnızca yazı renginde (örtü her an opak). REVEAL, ana ekran görsellerinin `decode()`'unu en fazla 4 sn bekliyor; 9 sn'lik güvenlik ağı ve test sözleşmeleri aynı. `VERSION` → `20261119-qa-mobile-perf-v1` (enjekte edilen dosyalar için önbellek yenileme) |
+| `side-games/home-approved-v1.js` | Arka plan ve ön plan `<picture><source type="image/webp">` + PNG yedek; `picture{display:contents}` |
+| `side-games/neon-entry-v1.js/.css` | Giriş görseli aynı yöntemle WebP; PNG yolu ve sözleşme testi korunuyor |
+| Yeni dosyalar | `neon-xi-background-v4.webp` (q82, 146 KB), `neon-xi-foreground-ice-v5.webp` (q90, alfa 100, 282 KB), `assets/entry/first-login-v1.webp` (q90, 287 KB) — aynı çözünürlük |
+| Draft dosyaları | Dokunulmadı |

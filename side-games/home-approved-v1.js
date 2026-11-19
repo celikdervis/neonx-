@@ -11,6 +11,7 @@
 .nx-approved-legacy{display:none!important}
 #bootHome .nx-home{width:min(100%,520px);margin:0 auto;padding:max(0px,calc(env(safe-area-inset-top) - 20px)) 0 env(safe-area-inset-bottom);position:relative;background:#080d12}
 #bootHome .nx-home-map{display:block;position:relative;width:100%;height:auto;overflow:visible;touch-action:pan-y;background:transparent}
+#bootHome .nx-raster-picture{display:contents}
 #bootHome .nx-raster-layer{position:absolute;top:0;left:0;width:100%;height:auto;display:block;pointer-events:none;user-select:none;image-rendering:auto}
 #bootHome .nx-raster-layer[data-layer="background"]{filter:blur(2px) saturate(.72) brightness(.86);opacity:.94;clip-path:inset(0)}
 #bootHome .nx-foreground{clip-path:url(#nx-foreground-clip);filter:brightness(.84) saturate(.72)}
@@ -111,8 +112,8 @@
     };
     const hotspot=(action,label,x,y,w,h,r=24,color='#718f9e',url='')=>`<a class="nx-hotspot" ${url?`href="./side-games/${url}"`:`role="button" data-action="${action}"`} tabindex="0" aria-label="${label}"><title>${label}</title><rect class="nx-hit" x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}"/>${contours[label]||`<rect class="nx-outline" x="${x+2}" y="${y+2}" width="${w-4}" height="${h-4}" rx="${r}"/>`}${icons[label]?`<g class="nx-icon-feedback" aria-hidden="true">${icons[label]}</g>`:''}</a>`;
     const navButton=(action,label,x,w,cx)=>`<a class="nx-hotspot" role="button" data-action="${action}" tabindex="0" aria-label="${label}" ${action==='home'?'aria-current="page"':''}><title>${label}</title><rect class="nx-hit" x="${x}" y="1659" width="${w}" height="118" rx="24"/><rect class="nx-outline" x="${x+9}" y="1663" width="${w-18}" height="110" rx="21"/><g class="nx-nav-glyph" aria-hidden="true">${navIcons[action]}</g><text class="nx-nav-label" x="${cx}" y="1750" aria-hidden="true">${label}</text><rect class="nx-nav-marker" x="${cx-26}" y="1778" width="52" height="4" rx="2" aria-hidden="true"/></a>`;
-    stage.innerHTML=`<img class="nx-raster-layer" data-layer="background" src="./side-games/assets/premium-home/neon-xi-background-v4.png" width="853" height="1844" alt="" decoding="async"/>
-    <img class="nx-raster-layer nx-foreground" data-layer="foreground" src="./side-games/assets/premium-home/neon-xi-foreground-ice-v5.png" width="853" height="1844" alt="" decoding="async" fetchpriority="high"/>
+    stage.innerHTML=`<picture class="nx-raster-picture"><source type="image/webp" srcset="./side-games/assets/premium-home/neon-xi-background-v4.webp"/><img class="nx-raster-layer" data-layer="background" src="./side-games/assets/premium-home/neon-xi-background-v4.png" width="853" height="1844" alt="" decoding="async"/></picture>
+    <picture class="nx-raster-picture"><source type="image/webp" srcset="./side-games/assets/premium-home/neon-xi-foreground-ice-v5.webp"/><img class="nx-raster-layer nx-foreground" data-layer="foreground" src="./side-games/assets/premium-home/neon-xi-foreground-ice-v5.png" width="853" height="1844" alt="" decoding="async" fetchpriority="high"/></picture>
     <svg class="nx-home-map nx-approved-canvas" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 853 1844" width="853" height="1844" aria-label="NEON XI oyun menüsü">
       <defs>
         <linearGradient id="nx-nav-surface" x2="0" y2="1"><stop stop-color="#15242b"/><stop offset="1" stop-color="#0b151c"/></linearGradient>

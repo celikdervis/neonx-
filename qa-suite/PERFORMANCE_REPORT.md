@@ -180,10 +180,10 @@ Her satır uygulandığında "Sonra" sütunu aynı araçla doldurulacak.
 
 | ID | Problem | Kaynak | Dosya(lar) | Önce (mid soğuk) | Sonra | Durum |
 |---|---|---|---|---|---|---|
-| PERF-01 | Yükleme örtüsü saydam, eski `#bootScreen` görünüyor | Guard `body::before`, çekirdeğin `mask-image` kuralını miras alıyor (hesaplanmış stil ile doğrulandı) | `index.html` (BOOT_GUARD) | Örtü 5,7–16,7 sn boyunca alta doğru saydam | — | Önerildi |
+| PERF-01 | Yükleme örtüsü saydam, eski `#bootScreen` görünüyor | (1) Guard `body::before`, çekirdeğin `mask-image` kuralını miras alıyor; (2) Draft'ın `body.nx-draft-active::before` kuralı (daha özgül) ~11. sn'de guard'ı tamamen eziyor (hesaplanmış stil ile doğrulandı) | `index.html` (BOOT_GUARD, boot stili, REVEAL_SCRIPT) | Örtü 5,7–16,7 sn boyunca saydam; 4 farklı yükleme ekranı; boş ana ekran | Tek ve opak yükleme ekranı (yükleme karelerinde en parlak piksel 7/255); ana ekran tamamlanmış olarak açılıyor | **Uygulandı** |
 | PERF-02 | 9 sn'lik "zorla göster" sayaçları hazır olmayan ekranı açığa çıkarabiliyor; giriş yapmış kullanıcıya "kontrol ediliyor" ve yanlış "gecikti" uyarısı | REVEAL_SCRIPT 9 sn, splash 9 sn, giriş katmanı 12 sn sayaçları | `index.html`, `neon-splash-safe-v1.js`, `neon-entry-v1.js` | SDK 12 sn gecikmede: 21 sn "kontrol ediliyor" + yanlış uyarı + 2,1 MB boşa indirme | — | Önerildi |
-| PERF-03 | Ana ekran görselleri 3,8 MB PNG | 853×1844 PNG | `home-approved-v1.js` + 2 görsel | Görseller 48,1 sn | — | Önerildi |
-| PERF-04 | Yeni kullanıcı giriş görseli 2,16 MB PNG | PNG | `neon-entry-v1.js` + görsel | Giriş butonları 60,5 sn | — | Önerildi |
+| PERF-03 | Ana ekran görselleri 3,8 MB PNG | 853×1844 PNG | `home-approved-v1.js` + 2 WebP | Görseller 48,1 sn; 3.765 KB | Görseller 21,0 sn; 428 KB (−3.337 KB); ekran PSNR 41,6–45,8 dB | **Uygulandı** |
+| PERF-04 | Yeni kullanıcı giriş görseli 2,16 MB PNG | PNG | `neon-entry-v1.js/.css` + WebP | Giriş butonları 60,5 sn; 2.111 KB | Giriş butonları 22,0 sn; 287 KB (−1.824 KB); ekran PSNR 38,8–46,5 dB | **Uygulandı** |
 | PERF-05 | Açılış ve boşta CPU'yu tüketen tam-belge tarayıcıları | Birleştirilmemiş `MutationObserver` + rAF + 700 ms tarama | `online-mobile-navigation-fix-v1.js`, `prematch-mobile-v2.js` (**Draft'a bitişik**) | Açılış CPU'sunun %66+%8'i; boşta %84 | — | **Onay gerekiyor** |
 | PERF-06 | Ana ekranda maç stadyumu görseli (2,8 MB) | CSS arka planı DOM'da hazır bekliyor | `match-stadium-user-v3.css` (**maç/Draft**) | 2,8 MB, ana ekran görselleriyle yarışıyor | — | **Onay gerekiyor** |
 | PERF-07 | Gizli Draft UI'ının boşta DOM'u değiştirmesi | 150 ms aralık + gövde gözlemcisi | `neon-xi-core.html` (**Draft**) | 10 sn'de ~1.500 mutasyon | — | Kapsam dışı (raporlandı) |
@@ -200,3 +200,28 @@ Her satır uygulandığında "Sonra" sütunu aynı araçla doldurulacak.
 - **Ana ekranda beklerken:** CPU sürekli %100 (4× yavaşlatılmış çekirdekte). Pil ve ısı etkisi beklenir; dokunma gecikmesi
   ölçülen drawer açılışında ~0,5 sn.
 - **Bellek** kontrol altında (heap 6–25 MB, artış eğilimi yok). Ama yoğun ayırma ve GC döngüsü var.
+
+## 9. Uygulanan iyileştirmeler — önce / sonra (aynı makine, aynı araç, medyan)
+
+| Senaryo | Metrik | Önce | Sonra | Fark |
+|---|---|---|---|---|
+| Orta seviye, ilk açılış (n=5 / n=3) | Ana ekran tamamen çizilmiş (görseller) | 48.097 ms | **21.264 ms** | −26,8 sn (−%56) |
+| | Kullanıcının ilk gördüğü ana ekran | 17.538 ms (**görselsiz, boş**) | 20.694 ms (**tamamlanmış**) | +3,2 sn, ama artık bitmiş ekran |
+| | Yükleme sırasında farklı ekran sayısı | 4 (+ arkadan sızan eski panel) | **1** | |
+| Düşük seviye, ilk açılış (n=3) | Görseller | 49.392 ms | 26.355 ms | −23,0 sn |
+| | Ana ekran | 23.875 ms (görselsiz) | 24.639 ms (tamamlanmış) | +0,8 sn |
+| Yeni kullanıcı (n=3) | Giriş butonları görünür | 60.471 ms | **22.041 ms** | −38,4 sn (−%64) |
+| Önbellekli açılış (n=3) | Ana ekran | 10.469 ms | 10.724 ms | +0,26 sn (görsel çözme beklemesi) |
+| İndirilen görsel (ana ekran / giriş) | | 3.765 KB / 2.111 KB | 428 KB / 287 KB | −5.161 KB |
+
+Not: Toplam aktarılan bayt bu tabloda kullanılmadı. Görseller erken bitince ölçüm penceresi, hâlâ inmekte olan 2,8 MB'lık maç
+stadyumu görselinden önce kapanıyor; o yüzden toplamlar karşılaştırılamaz. Kazanç, dönüştürülen dosyaların kesin boyutlarından verildi.
+
+Kanıt: `evidence/perf-after-filmstrip-mid-cold.jpg` (önce: `perf-baseline-filmstrip-mid-cold.jpg`),
+`evidence/webp-entry-compare-iphone-se.png` (PNG / WebP / 6 kat büyütülmüş fark).
+
+**Yan etkiler ve regresyon:**
+- `qa-suite` işlevsel paketi: 41/42 (tek başarısız M-07 = açık B-03, değişiklikten bağımsız).
+- Projenin kendi testleri: değişiklik öncesiyle aynı (önceden başarısız olan iki test dışında hepsi geçiyor).
+- PNG dosyaları silinmedi: yedek olarak kalıyor ve sözleşme testlerinin istediği onaylı görseller hâlâ yerinde.
+- Etkileşime hazır olma süresi değişmedi. Bunun sebebi Draft tarafındaki ana iş parçacığı yükü (PERF-05/06/07, onay bekliyor).

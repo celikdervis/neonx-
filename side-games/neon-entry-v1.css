@@ -5,7 +5,8 @@ body.nx-entry-open{overflow:hidden!important}
 #nxEntry{position:fixed;inset:0;z-index:2147483645;display:grid;place-items:center;overflow:hidden;background:#02070b;color:#f4fff5;font-family:Arial,system-ui,sans-serif;isolation:isolate}
 #nxEntry .nx-entry-canvas{position:relative;width:min(100vw,56.2799dvh);max-height:100dvh;aspect-ratio:941 / 1672;overflow:hidden;opacity:0;transition:opacity .2s linear;flex:none}
 #nxEntry[data-phase="welcome"] .nx-entry-canvas{opacity:1}
-#nxEntry .nx-entry-art{width:100%;height:100%;object-fit:contain;display:block;pointer-events:none;user-select:none;-webkit-user-drag:none}
+#nxEntry .nx-entry-picture{display:contents}
+.nx-entry-art{width:100%;height:100%;object-fit:contain;display:block;pointer-events:none;user-select:none;-webkit-user-drag:none}
 #nxEntry .nx-entry-map{position:absolute;inset:0;width:100%;height:100%;display:block;overflow:visible;touch-action:manipulation}
 #nxEntry .nx-entry-hotspot{outline:none;-webkit-tap-highlight-color:transparent;cursor:pointer;touch-action:manipulation}
 #nxEntry .nx-entry-hotspot rect{fill:rgba(255,255,255,.001);stroke:transparent;stroke-width:2;vector-effect:non-scaling-stroke;transition:fill .15s,stroke .15s,filter .15s}
