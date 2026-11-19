@@ -144,16 +144,34 @@ async function startMatch(mode){
       return q;
     },{applyLocally:false});
     state.queueOff?.();
-    state.queueOff=onValue(ref(db,`${path}/${uid}`),snapshot=>{
-      const x=snapshot.val();if(x?.status!=='matched')return;
-      state.queueOff?.();state.queueOff=null;
-      message('Rakip bulundu. Oyun otomatik başlatılıyor…');
-      setTimeout(()=>{location.href=modeUrl(mode,{nxAuto:'1',nxRole:x.role||(x.hostUid===uid?'host':'guest'),nxCode:x.roomCode,nxPartySize:String(x.partySize||x.members?.length||needed),nxName:state.profile.username,nxUid:uid,nxOpponent:x.opponentUid||x.members?.find(member=>member!==uid)||'',nxMatch:x.matchId})},350);
-    });
+    state.queueOff=onValue(ref(db,`${path}/${uid}`),snapshot=>followMatch(mode,snapshot.val()));
     renderSearching(mode);
   }catch(e){message(e?.message||'Rakip araması başlatılamadı.',true);throw e}
 }
-function renderSearching(mode){const v=shade.querySelector('[data-view="play"]');v.innerHTML=`<div class="nx-social-searching"><b>${esc(MODES[mode].label)}</b><div>Rakip aranıyor…</div><button class="nx-social-btn nx-social-danger" data-act="cancel">ARAMAYI İPTAL ET</button></div>`;v.querySelector('[data-act="cancel"]').onclick=async()=>{state.queueOff?.();state.queueOff=null;try{await remove(ref(db,`${queuePath(mode)}/${state.user.uid}`));message('Arama iptal edildi.')}catch(e){message(e?.message||'Arama iptal edilemedi.',true)}render('play')}}
+// Sends this player to the room of a match recorded on their queue entry (once per match).
+function followMatch(mode,x){
+  if(x?.status!=='matched')return false;
+  const key=x.matchId||x.roomCode||'matched';if(state.followedMatch===key)return false;
+  state.followedMatch=key;state.queueOff?.();state.queueOff=null;
+  const uid=state.user.uid,needed=mode==='imposter'?3:2;
+  message('Rakip bulundu. Oyun otomatik başlatılıyor…');
+  setTimeout(()=>{location.href=modeUrl(mode,{nxAuto:'1',nxRole:x.role||(x.hostUid===uid?'host':'guest'),nxCode:x.roomCode,nxPartySize:String(x.partySize||x.members?.length||needed),nxName:state.profile.username,nxUid:uid,nxOpponent:x.opponentUid||x.members?.find(member=>member!==uid)||'',nxMatch:x.matchId})},350);
+  return true;
+}
+// B-03: cancelling only removes an entry that is still waiting. If an opponent's transaction already
+// matched this player, the match wins and is followed, so nobody is sent to a room whose host left.
+// Draft keeps its original cancel path (out of scope for this change).
+async function cancelSearch(mode,button){
+  const path=`${queuePath(mode)}/${state.user.uid}`;
+  if(mode==='draft'){state.queueOff?.();state.queueOff=null;try{await remove(ref(db,path));message('Arama iptal edildi.')}catch(e){message(e?.message||'Arama iptal edilemedi.',true)}render('play');return}
+  if(button){if(button.disabled)return;button.disabled=true}
+  let result;
+  try{result=await runTransaction(ref(db,path),x=>x?.status==='matched'?undefined:null,{applyLocally:false})}
+  catch(e){if(button)button.disabled=false;message(e?.message||'Arama iptal edilemedi.',true);return}
+  if(!result.committed){followMatch(mode,result.snapshot.val());return}
+  state.queueOff?.();state.queueOff=null;message('Arama iptal edildi.');render('play');
+}
+function renderSearching(mode){const v=shade.querySelector('[data-view="play"]');v.innerHTML=`<div class="nx-social-searching"><b>${esc(MODES[mode].label)}</b><div>Rakip aranıyor…</div><button class="nx-social-btn nx-social-danger" data-act="cancel">ARAMAYI İPTAL ET</button></div>`;const b=v.querySelector('[data-act="cancel"]');b.onclick=()=>cancelSearch(mode,b)}
 
 async function chooseMode(mode,choice){
   if(!MODES[mode])throw new Error('Geçersiz oyun modu.');

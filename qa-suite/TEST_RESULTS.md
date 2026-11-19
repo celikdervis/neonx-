@@ -75,3 +75,25 @@ Performans (orta seviye mobil, soğuk, n=3): ana ekran görselleri 48,1 → 21,3
 yükleme ekranı 4 farklı ekrandan 1 ekrana; arkadan sızma 0 kare (bkz. PERFORMANCE_REPORT §9).
 
 Gerçek cihaz (iOS Safari, Android Chrome), gerçek Firebase ve gerçek izin pencereleri: **BLOCKED** (BLOCKED_TESTS.md).
+
+---
+
+# Test Results — Tur 4 (Career Twin, Wordle, B-03), 2026-11-19
+
+Ortam aynı: mock RTDB + Chromium. Sayılar bu turda gerçekten çalıştırılanlardır.
+
+| Test | Çalıştırma | PASS | FAIL | Not |
+|---|---|---|---|---|
+| T-01 Career Twin menüsü, 7 profil (SE, 8, 13 Mini, Galaxy S8, Pixel 7, 14 Pro Max, masaüstü) + T-02 RAKİP ARA akışı | gerçek yazı tipi 5 tekrar + yedek yazı tipi 1 + ekran görüntüsü turu | 40 + 8 + 4 | 0 | Düzeltme öncesi: "OYUN MODU" çakışması 7/7 profilde; kart RAKİP ARA'yı ≤700 px'te (3 profil) kapatıyordu, iki profilde buton tıklanamıyordu |
+| W-01/W-02 Wordle (7 cihaz + yazma) | gerçek yazı tipi 3 tekrar + yedek 1 | 24 + 8 | 0 | Yeniden doğrulama (düzeltme `df7e5d0`) |
+| M-06 iptal + arama aynı anda (doğal) | düzeltmeden sonra | 14 | 0 | Sonuç: iki taraf da kuyrukta değil |
+| M-07 aynı yarış, A'nın bağlantısı yavaş | düzeltmeden sonra | 14 | 0 | Sonuç: ikisi de aynı odada |
+| M-08 Imposter 3 kişi, yavaş iptal (yeni) | düzeltmeden sonra | 9 | 0 | Üçü aynı odada, `nxPartySize=3` |
+| M-09 ana sayfa (`safe-v4`), yavaş iptal (yeni) | düzeltmeden sonra | 9 | 0 | |
+| M-10 ana sayfada normal iptal (yeni) | düzeltmeden sonra | 9 | 0 | |
+| Orijinal koda karşı ayırt edicilik (M-06…M-10 × 2) | 1 | 4 | 6 | M-07, M-08, M-09 2/2 FAIL (hata yeniden üretildi); M-06, M-10 PASS. Sayılara dahil değil |
+| Sosyal regresyon (matchmaking + party + B-01 + B-02) | 2 | 56 | 0 | |
+| Tüm paket | 1 | 67 | 0 | 1 skipped (mock-conformance, SDK yolu verilmedi); ayrıca SDK ile 1/1 PASS |
+| `scripts/` sosyal ve sözleşme testleri (10 adet) | 1 | 10 | 0 | test_imposter_realtime_render ve test_xox_answer_review bu turda çalıştırılmadı (önceden de FAIL) |
+
+Draft modunun eşleştirme iptali: **NOT TESTED** (kapsam dışı, kod değiştirilmedi).

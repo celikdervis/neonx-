@@ -58,9 +58,9 @@ Her kullanıcı (A, B, C, D) ayrı bir Playwright **browser context**'idir: ayr�
 ayrı oturum ve ayrı uid. Aynı sekmede kullanıcı adı değiştirilerek test yapılmaz.
 Ağ kopması, `window.__NX_MOCK_NET__.drop()/restore()` ile yalnızca o kullanıcının sayfasında simüle edilir.
 
-## Bilinen açık test
+## Bilinen açık testler
 
-`M-07` (ve zamanlamaya bağlı olarak `M-06`) şu anda **FAIL** veriyor. Bu açık hata B-03'tür, bkz. `BUG_TRACKER.md`.
+Yok. B-03 düzeltildi (M-06…M-10). Draft modunun iptal yolu kapsam dışı olduğu için değiştirilmedi ve test edilmedi.
 
 ## Belgeler
 

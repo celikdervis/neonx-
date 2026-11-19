@@ -94,3 +94,14 @@ bu sürüm dizelerinin güncellenmesi önerilir. Bu çalışmada HTML dosyaları
 | Kök neden | `aeabe15` "Nasıl oynanır" kartını geri ekledi (`top:69.55%`), ama ≤700 px kuralı mod panelini %40 yüksekliğe büyütüyor (alt kenar %76,5): kart RAKİP ARA'nın üstüne biniyordu. Ayrıca mod listesi panelin %8'inden başlıyor, başlık ise %6,5'te: başlık ilk butonun arkasında kalıyordu |
 | Sonra | Mod listesi `top: calc(6.5% + 3.9cqw + 9px)` (başlığın yazı boyutu `3.9cqw`), altta %3 pay (panelin köşe kesiği son butonun çerçevesini kesmesin). ≤700 px'te kart `top:78%` (640 px'lik alanın içinde, 499–607 px) |
 | Değişmeyen | Tasarım, renkler, buton içerikleri, menü eylemleri, "Nasıl oynanır" metni. Butonlar en az 50 px yüksek |
+
+## FIX-09 → B-03 (iptal ile eşleşme yarışı)
+
+| | |
+|---|---|
+| Dosyalar | `social/neon-social.js` (yan sayfalar), `social/neon-social-safe-v4.js` (ana sayfa), 5 yan sayfada `neon-social.js?v=` etiketi (`20261119-qa-b03`; her sayfa modülü tek bir etiketle yüklüyor, modül iki kez yüklenmiyor) |
+| Önce | İptal önce eşleşme dinleyicisini kapatıyor, sonra kaydı durumuna bakmadan siliyordu. Rakibin eşleştirme transaction'ı silmeden önce sunucuya ulaşırsa rakip yönlendiriliyor, iptal eden hiçbir şey görmüyordu |
+| Sonra | `runTransaction(kuyruk/{uid}, x => x?.status==='matched' ? undefined : null)`. `waiting` ise silinir. `matched` ise transaction iptal edilir ve oyuncu, sunucudaki eşleşme kaydıyla odaya yönlendirilir. Dinleyici bu sırada açık kalıyor; çift yönlendirmeye karşı eşleşme kimliğiyle tek seferlik koruma (`followMatch`). İptal butonu işlem sürerken kilitli; hata olursa açılıyor ve oyuncu aramada kalıyor |
+| Neden bu yol | Eşleştirme transaction'ı kuyruk düğümünün tamamında, iptal ise oyuncunun alt düğümünde karşılaştır-yaz yapıyor. Hangisi sunucuya önce ulaşırsa diğeri çakışma alıp güncel veriyle yeniden çalışıyor; iki taraf aynı sonucu görüyor. Eşleşmeyi bozup rakibi kuyruğa geri almak daha karmaşık ve rakip zaten yönlendirilmiş olabiliyor |
+| Draft | `mode==='draft'` için iki dosyada da orijinal iptal yolu aynen korundu (Draft kapsam dışı). Draft'ta B-03 açık kalıyor |
+| Etkilenen diğer akışlar | M-01…M-05, B-02, P-01…P-12 yeniden çalıştırıldı: PASS. Eşleşme dinleyicisi yan sayfada `followMatch` fonksiyonuna taşındı; URL parametreleri aynı |

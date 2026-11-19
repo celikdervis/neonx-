@@ -97,7 +97,7 @@ function searchingMarkup(mode){
   const c=MODES[mode];
   v.dataset.nxSafeSearching='1';
   v.innerHTML=`<div class="nx-social-searching"><b>${esc(c.label)}</b><div>${c.players===2?'Rakip':'Oyuncular'} aranıyor…</div><small style="display:block;margin:7px 0 13px;color:#91a397">Arkadaş olmanız gerekmez${c.players>2?` · ${c.players} oyuncu olduğunda oyun başlayacak.`:'.'}</small><button class="nx-social-btn nx-social-danger" type="button" data-nx-safe-cancel>ARAMAYI İPTAL ET</button></div>`;
-  v.querySelector('[data-nx-safe-cancel]').onclick=()=>cancelSearch(true);
+  const cancel=v.querySelector('[data-nx-safe-cancel]');cancel.onclick=()=>cancelSearch(true,cancel);
 }
 async function clearQueueEntries(mode,uid){
   if(!state.db||!mode||!uid)return;
@@ -106,7 +106,27 @@ async function clearQueueEntries(mode,uid){
     remove(ref(state.db,`social/universalQueuesV2/${mode}/${uid}`))
   ]);
 }
-async function cancelSearch(reopen=false){
+// B-03: the cancel button only removes an entry that is still waiting. If another player's transaction
+// already matched this player, the match wins and is followed instead of leaving the others in a room
+// whose player cancelled. Draft keeps its original cancel path (out of scope for this change).
+async function cancelWaiting(q,button){
+  if(button){if(button.disabled)return;button.disabled=true}
+  let result;
+  try{result=await runTransaction(ref(state.db,`${q.path}/${q.uid}`),x=>x?.status==='matched'?undefined:null,{applyLocally:false})}
+  catch(e){if(button)button.disabled=false;status(e?.message||'Arama iptal edilemedi.',true);return}
+  if(state.queue!==q)return;
+  if(!result.committed){
+    const data=result.snapshot.val(),me=identity(),url=me&&targetUrl(q.mode,data,me);
+    state.queueOff?.();state.queueOff=null;state.queue=null;status('Eşleşme zaten bulundu. Oyun açılıyor…');
+    if(url)setTimeout(()=>{location.href=url},250);
+    return;
+  }
+  state.queue=null;state.queueOff?.();state.queueOff=null;
+  await clearQueueEntries(q.mode,q.uid);
+  status('Eşleşme araması iptal edildi.');window.NEON_SOCIAL?.open?.('play');setTimeout(patchPlay,0);
+}
+async function cancelSearch(reopen=false,button=null){
+  if(reopen&&state.queue&&state.queue.mode!=='draft')return cancelWaiting(state.queue,button);
   const q=state.queue;state.queue=null;state.queueOff?.();state.queueOff=null;
   if(q)await clearQueueEntries(q.mode,q.uid);
   if(reopen){status('Eşleşme araması iptal edildi.');window.NEON_SOCIAL?.open?.('play');setTimeout(patchPlay,0)}

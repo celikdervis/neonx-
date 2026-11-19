@@ -19,7 +19,7 @@ ve her biri en az 10 çalıştırmada (2 tur × 5) aynı sonucu verdi. M-06 hari
 | Lider A süreden uzun kopuk kalır | — | "LİDER" (B'nin istemcisi devralıyor) | `leaderUid` = B |
 | 1v1 eşleşme (XOX) | Odaya yönlendiriliyor (host ya da guest) | Aynı oda kodu, karşı rol | Kuyruk kayıtları yönlendirmeden sonra temizleniyor |
 | A iptal eder, sonra B arar | Panel "Oyna" sekmesinde açık kalıyor | Beklemede, eşleşme yok | A kuyrukta değil |
-| A'nın bağlantısı yavaşken A iptal eder, aynı anda B arar | Hiçbir şey olmuyor | **Odaya yönlendiriliyor, host gelmiyor** (B-03) | A'nın kaydı sonradan siliniyor |
+| A'nın bağlantısı yavaşken A iptal eder, aynı anda B arar | Önce: hiçbir şey olmuyor. **Sonra:** "Eşleşme zaten bulundu", aynı odaya yönlendiriliyor | Önce: **odaya yönlendiriliyor, host gelmiyor** (B-03). **Sonra:** aynı oda, karşı rol | İptal geç kaldıysa eşleşme geçerli; iptal önce geldiyse ikisi de kuyrukta değil (M-07, ana sayfa M-09) |
 
 ## Üç kullanıcı (A, B, C)
 

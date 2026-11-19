@@ -44,7 +44,7 @@ ana sayfadaki bir düzeltme, yan sayfalara otomatik olarak yansımaz.
 |---|---|---|
 | 1 | Parti/lobi (yan sayfalar) | B-01 düzeltildi; P-01…P-12 çalıştı |
 | 2 | Sosyal/arkadaşlık | NOT TESTED (sıradaki) |
-| 3 | Eşleştirme | B-02 düzeltildi; M-01…M-07 çalıştı; B-03 açık |
+| 3 | Eşleştirme | B-02 ve B-03 düzeltildi (Draft modu hariç); M-01…M-10 çalıştı |
 | 4 | Yan oyun çok oyunculu akışları | NOT TESTED |
 | 5 | Kopma/yeniden bağlanma | Parti (P-09…P-11) ve kuyruk (M-04, M-05) için yapıldı; oyunlar için NOT TESTED |
 | 6 | Mobil UX | NOT TESTED (yalnızca bir gözlem: UX-01) |

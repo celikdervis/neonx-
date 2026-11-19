@@ -80,13 +80,13 @@ birbirinden farklı biçimde hesaplanıyor.
 
 ---
 
-## B-03 — Bağlantı yavaşken iptal ile eşleşme çakışırsa rakip tek başına odaya gönderiliyor (OPEN)
+## B-03 — Bağlantı yavaşken iptal ile eşleşme çakışırsa rakip tek başına odaya gönderiliyor (FIXED, Draft modu hariç)
 
 | Alan | Değer |
 |---|---|
 | Modül | Eşleştirme, eski panel (1v1 ve Imposter; aynı kod yolu) |
 | Öncelik | P2 |
-| Durum | **OPEN**. Önceden var olan hata, B-02 düzeltmesinden bağımsız; orijinal kodda da 2/2 oluştu |
+| Durum | **FIXED** (XOX, Career Twin, Imposter; yan sayfalar ve ana sayfa). **Draft modu için OPEN**: Draft kapsam dışı olduğu için Draft aramasının iptal yolu bilerek değiştirilmedi. Önceden var olan hata, B-02 düzeltmesinden bağımsız |
 
 **Tekrar üretme adımları:** A XOX'ta RAKİP ARA'ya basar. A'nın yazma istekleri 1,5 sn gecikmeli gider
 (yavaş mobil bağlantıyı simüle eder). A İPTAL'e basar ve hemen ardından B RAKİP ARA'ya basar.
@@ -101,11 +101,19 @@ o çalıştırmanın ayrıntılı çıktısı kaydedilemedi.
 bakmadan** siliyor. B'nin eşleştirme transaction'ı, A'nın silme isteğinden önce sunucuya ulaşırsa A'yı `matched`
 olarak işaretliyor. B yönlendiriliyor, A ise artık dinlemediği için hiçbir şey görmüyor.
 
-**Önerilen yaklaşım (henüz uygulanmadı):** İptal, kendi kaydı üzerinde bir transaction olsun: kayıt `waiting` ise silinsin;
-`matched` ise iptal geç kalmış demektir, kullanıcı ya eşleşmeye yönlendirilsin ya da eşleşme açıkça bozulup karşı taraf
-kuyruğa geri alınsın. Aynı yapının ana sayfadaki `safe-v4` kopyası da ayrıca test edilmeli.
+**Ana sayfa:** `neon-social-safe-v4.js` içindeki `cancelSearch` aynı yapıdaydı; M-09 ile orijinal kodda 2/2 yeniden üretildi.
+Imposter (3 kişi) için M-08: orijinal kodda 2/2 `{"A":"stayed","B":"sent-to-room","C":"sent-to-room"}`.
 
-**Test:** `tests/matchmaking-regression.spec.mjs` → M-06, M-07 (açık hatayı gösterdikleri için şu an FAIL veriyorlar).
+**Düzeltme (FIX-09):** İptal, oyuncunun kendi kuyruk kaydında bir transaction: kayıt hâlâ `waiting` ise siliniyor;
+`matched` ise iptal geç kalmış demektir, transaction iptal ediliyor ve oyuncu eşleşmeye yönlendiriliyor
+("Eşleşme zaten bulundu. Oyun açılıyor…"). Eşleşme dinleyicisi işlem bitene kadar açık kalıyor. İki taraf her zaman
+aynı sonuca varıyor: ya ikisi de aynı odada ya da ikisi de kuyrukta değil.
+
+**Test:** `tests/matchmaking-regression.spec.mjs` → M-06, M-07 (yan sayfa 1v1), M-08 (Imposter 3 kişi), M-09 (ana sayfa),
+M-10 (ana sayfada normal iptal). Orijinal koda karşı M-07, M-08 ve M-09 2/2 FAIL; düzeltmeyle 5/5 PASS.
+Not: M-07 artık A'nın transaction (`/cas`) isteklerini de geciktiriyor; düzeltme iptali transaction ile yaptığı için
+yalnızca `/write` geciktirmek yavaş bağlantıyı simüle etmezdi. Orijinal kod iptalde `/write` kullandığı için bu değişiklik
+orijinal sonuç üzerinde etkisiz (yine 2/2 FAIL).
 
 ---
 
