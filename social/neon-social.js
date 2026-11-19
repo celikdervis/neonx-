@@ -12,6 +12,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const norm=s=>String(s||'').toLocaleLowerCase('tr-TR').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ı/g,'i').replace(/[^a-z0-9_]/g,'').slice(0,20);
 const clean=s=>String(s||'').replace(/[^A-Za-zÇĞİÖŞÜçğıöşü0-9_]/g,'').slice(0,20);
 const modeUrl=(mode,params={})=>{const u=new URL(MODES[mode].path,base);Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));return u.href};
+const queuePath=mode=>mode==='imposter'?`social/universalQueuesV2/${mode}`:`social/matchQueues/${mode}`;
 const codeFor=mode=>MODES[mode].code==='numeric4'?String(Math.floor(1000+Math.random()*9000)):[...Array(MODES[mode].code==='alpha5'?5:6)].map(()=>'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*32)]).join('');
 const emptyStats=()=>({wins:0,losses:0,draws:0,games:0});
 const weekKey=(date=new Date())=>{const d=new Date(Date.UTC(date.getUTCFullYear(),date.getUTCMonth(),date.getUTCDate())),day=d.getUTCDay()||7;d.setUTCDate(d.getUTCDate()-day+1);return d.toISOString().slice(0,10)};
@@ -128,7 +129,7 @@ async function startMatch(mode){
   const config=MODES[mode];
   if(!config?.matchable){message('Bu mod için çevrimiçi eşleştirme henüz bulunmuyor.',true);return}
   state.preferredMode=mode;
-  const needed=mode==='imposter'?3:2,path=mode==='imposter'?`social/universalQueuesV2/${mode}`:`social/matchQueues/${mode}`,uid=state.user.uid,joinedAt=Date.now();
+  const needed=mode==='imposter'?3:2,path=queuePath(mode),uid=state.user.uid,joinedAt=Date.now();
   message(needed===3?'Üç kişilik Imposter rakibi aranıyor…':'Uygun rakip aranıyor…');
   try{
     await set(ref(db,`${path}/${uid}`),{uid,username:state.profile.username,status:'waiting',joinedAt});
@@ -152,7 +153,7 @@ async function startMatch(mode){
     renderSearching(mode);
   }catch(e){message(e?.message||'Rakip araması başlatılamadı.',true);throw e}
 }
-function renderSearching(mode){const v=shade.querySelector('[data-view="play"]');v.innerHTML=`<div class="nx-social-searching"><b>${esc(MODES[mode].label)}</b><div>Rakip aranıyor…</div><button class="nx-social-btn nx-social-danger" data-act="cancel">ARAMAYI İPTAL ET</button></div>`;v.querySelector('[data-act="cancel"]').onclick=async()=>{state.queueOff?.();state.queueOff=null;await remove(ref(db,`social/matchQueues/${mode}/${state.user.uid}`));message('Arama iptal edildi.');render('play')}}
+function renderSearching(mode){const v=shade.querySelector('[data-view="play"]');v.innerHTML=`<div class="nx-social-searching"><b>${esc(MODES[mode].label)}</b><div>Rakip aranıyor…</div><button class="nx-social-btn nx-social-danger" data-act="cancel">ARAMAYI İPTAL ET</button></div>`;v.querySelector('[data-act="cancel"]').onclick=async()=>{state.queueOff?.();state.queueOff=null;try{await remove(ref(db,`${queuePath(mode)}/${state.user.uid}`));message('Arama iptal edildi.')}catch(e){message(e?.message||'Arama iptal edilemedi.',true)}render('play')}}
 
 async function chooseMode(mode,choice){
   if(!MODES[mode])throw new Error('Geçersiz oyun modu.');
