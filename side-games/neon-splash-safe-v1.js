@@ -198,6 +198,9 @@
       const ambientFlash = root.querySelector('#ambientFlash');
       const tipEl = root.querySelector('#tip');
       const nPaths = [nGlow, nChroma, nCore];
+      // The loop below re-schedules itself forever; stop it once this overlay is no longer the live one
+      // (hide() removes it and clears api.root), so a hidden splash costs no CPU.
+      const live = () => api.root === root;
       const easeOutCubic = t => 1 - Math.pow(1 - t, 3);
       const flashAmbient = ms => { ambientFlash.classList.add('on'); setTimeout(()=>ambientFlash.classList.remove('on'), ms); };
       const totalLenSafe = () => { try { return nCore.getTotalLength(); } catch(e) { return 1; } };
@@ -227,7 +230,7 @@
         clearTimeout(scheduleMicroFlicker.t);
         const delay = 1800 + Math.random()*1900;
         scheduleMicroFlicker.t = setTimeout(()=>{
-          if(!nLetter.classList.contains('steady')) return;
+          if(!live() || !nLetter.classList.contains('steady')) return;
           nLetter.classList.add('flicker-hot', 'jitter');
           flashAmbient(50);
           const pt = nCore.getPointAtLength(Math.random()*totalLenSafe());
@@ -240,10 +243,12 @@
       };
       const holdThenReset = () => {
         clearTimeout(scheduleMicroFlicker.t);
+        if(!live()) return;
         nLetter.style.opacity = 0;
         setTimeout(drawOn, 720);
       };
       const startFlicker = () => {
+        if(!live()) return;
         const beats = [
           { gap:110, state:'off' },
           { gap:95, state:'hot' },
@@ -271,6 +276,7 @@
           }, t);
         });
         setTimeout(()=>{
+          if(!live()) return;
           nLetter.classList.remove('flicker-off','flicker-hot','jitter');
           nLetter.classList.add('steady');
           flashAmbient(110);
@@ -279,6 +285,7 @@
         }, t + 220);
       };
       const drawOn = () => {
+        if(!live()) return;
         nPaths.forEach(armPath);
         nLetter.classList.remove('steady','flicker-hot','flicker-off');
         nLetter.style.opacity = 1;
@@ -289,6 +296,7 @@
         const start = performance.now();
         spark.style.opacity = 1;
         function frame(now){
+          if(!live()) return;
           const t = Math.min(1, (now-start)/duration);
           const eased = easeOutCubic(t);
           const offset = totalLen * (1-eased);
@@ -313,8 +321,9 @@
       ];
       let idx = 0;
       clearInterval(this.tipTimer);
-      this.tipTimer = setInterval(()=>{
-        if(!this.root || !this.isVisible) return;
+      const tipTimer = this.tipTimer = setInterval(()=>{
+        if(!live()){ clearInterval(tipTimer); return; }
+        if(!this.isVisible) return;
         tipEl.classList.remove('visible');
         setTimeout(()=>{
           idx = (idx + 1) % tips.length;

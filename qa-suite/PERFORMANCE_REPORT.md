@@ -188,7 +188,7 @@ Her satır uygulandığında "Sonra" sütunu aynı araçla doldurulacak.
 | PERF-06 | Ana ekranda maç stadyumu görseli (2,8 MB) | CSS arka planı DOM'da hazır bekliyor | `match-stadium-user-v3.css` (**maç/Draft**) | 2,8 MB, ana ekran görselleriyle yarışıyor | — | **Onay gerekiyor** |
 | PERF-07 | Gizli Draft UI'ının boşta DOM'u değiştirmesi | 150 ms aralık + gövde gözlemcisi | `neon-xi-core.html` (**Draft**) | 10 sn'de ~1.500 mutasyon | — | Kapsam dışı (raporlandı) |
 | PERF-08 | Aynı yol için tekrarlanan dinleyiciler | Sosyal modüllerin her biri kendi aboneliğini kuruyor | `social/*` | 20 dinleyici / 8 yol, 8 oturum dinleyicisi | — | Önerildi (mimari adım) |
-| PERF-09 | Splash sayacı splash kalktıktan sonra da çalışıyor | `bindAnimation` interval'i temizlenmiyor | `neon-splash-safe-v1.js` | 1 kalıcı 3,2 sn interval | — | Önerildi |
+| PERF-09 | Splash kalktıktan sonra animasyonu ve sayacı çalışmaya devam ediyor | `bindAnimation` döngüsü (rAF + `getPointAtLength` + kıvılcım DOM'u, ~9 sn'de bir yeniden başlıyor) ve 3,2 sn interval'i hiç durmuyor; `show()` tekrar çağrılınca döngüler üst üste biniyor | `neon-splash-safe-v1.js` | Kaldırılmış katmanda 12 sn'de 287 çizim çağrısı; tekrar gösterimden sonra 500 | Döngü ve sayaç, katman kaldırılınca duruyor: 0 / 0 (`splash-lifecycle.spec.mjs` 6/6). Boşta CPU: 28 ms → 0 ms (3 × 20 sn, 4x yavaşlatma); küçük kazanç | **Düzeltildi** |
 | PERF-10 | Monolitik çekirdek ana ekran için indiriliyor ve çalıştırılıyor | Mimari | `index.html`, `neon-xi-core.html` | 759 KB gzip, Slow 4G'de 5,3 sn indirme, tamamı inmeden ayrıştırma başlamıyor; satır içi script'ler açılışta ~1,5 sn CPU (mid) | — | Uzun vadeli (Draft QA ile) |
 
 ## 8. Mobil cihaz etkisi (özet)
@@ -225,3 +225,17 @@ Kanıt: `evidence/perf-after-filmstrip-mid-cold.jpg` (önce: `perf-baseline-film
 - Projenin kendi testleri: değişiklik öncesiyle aynı (önceden başarısız olan iki test dışında hepsi geçiyor).
 - PNG dosyaları silinmedi: yedek olarak kalıyor ve sözleşme testlerinin istediği onaylı görseller hâlâ yerinde.
 - Etkileşime hazır olma süresi değişmedi. Bunun sebebi Draft tarafındaki ana iş parçacığı yükü (PERF-05/06/07, onay bekliyor).
+
+## Tur 4 notu — boşta CPU (2026-11-19)
+
+`cpu-profile.mjs --idle 20 --runs 3` (orta mobil, 4x CPU yavaşlatma, ana ekran boşta), splash düzeltmesinden önce ve sonra:
+
+| Dosya | Önce (ms) | Sonra (ms) | Pay |
+|---|---|---|---|
+| `prematch-mobile-v2.js` | 8.857 | 8.826 | %43,6 |
+| `online-mobile-navigation-fix-v1.js` | 7.747 | 7.852 | %38,8 |
+| `index.html` (boot/inline) | 1.402 | 1.483 | %7,3 |
+| `side-games/neon-splash-safe-v1.js` | 28 | 0 | — |
+
+Boşta CPU'nun ~%82'si, kullanıcının **dokunulmaz** listesindeki iki dosyadan geliyor. Bu turda değiştirilmediler.
+Mobil pil ve ısınma için en büyük kalan kazanç burada; sahibinin onayıyla ayrı bir çalışma gerektirir (bkz. açık konular).
