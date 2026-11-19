@@ -51,3 +51,22 @@ test('X-02 iPhone SE: across 20 random boards no header or name overflows or is 
   expect([...bad]).toEqual([]);
   test.info().annotations.push({ type: 'wrap-fallback', description: JSON.stringify([...wrapped]) });
 });
+
+// X-03: the "OYUN MODU" label sits inside the menu panel, clear of its cut top-left corner
+// and above the first mode button (before: at the panel's corner, first letter clipped).
+for (const device of ['iPhone SE', 'Galaxy S8', 'iPhone 14 Pro Max']) test(`X-03 ${device}: menu panel title is inside the panel and above the modes`, async ({ users }) => {
+  const A = await users('A', { device });
+  await A.page.goto('/side-games/football-xox/index.html');
+  await A.page.waitForSelector('.menuPanel .menuPanelTitle');
+  await A.page.evaluate(() => document.fonts.ready);
+  await A.page.waitForTimeout(800);
+  const r = await A.page.evaluate(() => {
+    const t = document.querySelector('.menuPanelTitle'), p = document.querySelector('.menuPanel').getBoundingClientRect(), g = document.querySelector('.menuPanel .modeGrid').getBoundingClientRect();
+    const rg = document.createRange(); rg.selectNodeContents(t); const b = rg.getBoundingClientRect();
+    return { left: b.left - p.left, top: b.top - p.top, bottom: b.bottom - p.top, gridTop: g.top - p.top, cut: p.width * 0.028 };
+  });
+  console.log('X-03', device, JSON.stringify(r));
+  expect(r.left, 'text starts right of the corner cut').toBeGreaterThan(r.cut + 2);
+  expect(r.top, 'text below the panel top edge').toBeGreaterThanOrEqual(3);
+  expect(r.bottom, 'text above the first mode button').toBeLessThanOrEqual(r.gridTop);
+});

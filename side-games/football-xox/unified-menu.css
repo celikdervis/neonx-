@@ -63,3 +63,6 @@ body[data-ct-screen="menu"] .app::before{background:#0000004d}
 body[data-ct-screen="menu"] .brand .subtitle{font-size:3.25cqw;max-width:52cqw}
 body[data-ct-screen="menu"] .menuModeDescription{font-size:3.2cqw}
 body[data-ct-screen="menu"] .menuModeArrow .menuIcon{width:5cqw;height:5cqw;stroke-width:2.2}
+/* QA: keep "OYUN MODU" inside the panel; at the very top-left corner the panel's cut corner clipped its first letter. */
+body[data-ct-screen="menu"] .menuPanelTitle{padding:6px 0 0 5%}
+body[data-ct-screen="menu"] .modeGrid{inset:max(8.5%,calc(3.7cqw * 1.1 + 10px)) 0 0}

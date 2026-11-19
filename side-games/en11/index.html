@@ -41,6 +41,8 @@
     .directionLabel{color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.08em;margin-right:3px}
     .chip{border:1px solid rgba(141,185,155,.2);background:rgba(255,255,255,.025);border-radius:999px;padding:7px 12px;font-size:11px;font-weight:800;color:#a9bdb0}
     .chip.active{color:#07120a;background:var(--lime);border-color:transparent}
+    /* QA: 44 px tap area for the 30 px direction chips without changing how they look. */
+    .directionRow .chip{position:relative;z-index:1;touch-action:manipulation}.directionRow .chip::after{content:"";position:absolute;inset:-8px -4px}
     .buttonRow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
     .btn{min-height:46px;border:1px solid rgba(49,255,118,.3);border-radius:12px;background:rgba(49,255,118,.055);padding:10px 12px;font:800 10px 'Orbitron',sans-serif;letter-spacing:.05em}
     .btn.primary{background:var(--green);border-color:transparent;color:#041009}

@@ -134,3 +134,12 @@ bu sürüm dizelerinin güncellenmesi önerilir. Bu çalışmada HTML dosyaları
 | Değişen | `side-games/en11/index.html`, `side-games/career-twin/game.js`, `side-games/parts/part05.txt`: `https://unpkg.com/peerjs@1.5.5/...` → yerel yol |
 | Bulgu | PeerJS'i gerçekten yükleyen tek sayfa EN11. Career Twin `firebase-peer-shim-v1.js` ile `window.Peer`'i Firebase üzerinden sağlıyor; Imposter'da `online-base44-imposter.js`, `ensurePeerJS`'i boş fonksiyonla değiştiriyor. Bu iki sayfadaki satırlar yedek yol |
 | Test | `peerjs-local.spec.mjs` 9/9: unpkg isteği yok; EN11'de yerel dosya 200 ve `window.Peer` tanımlı. EN11'in P2P oyunu (PeerJS bulut sinyal sunucusu gerekli) **BLOCKED** |
+
+## FIX-13 → UX-09, UX-10, UX-11 (görsel ve dokunma)
+
+| Dosya | Değişiklik |
+|---|---|
+| `side-games/football-xox/unified-menu.css` (+ `index.html` `?v=`) | "OYUN MODU" etiketine iç boşluk; mod listesinin üstü etiket yüksekliğine göre (`max(8.5%, 3.7cqw × 1.1 + 10px)`) |
+| `side-games/en11/index.html` | `.directionRow .chip::after` ile 44 px dokunma alanı (`inset:-8px -4px`; ilk deneme `-7px` kenarlık yüzünden 42 px'te kaldı ve G-02 bunu yakaladı), `z-index:1` ile alttaki metin notunun üstünde |
+| `side-games/how-to-play.html` (14), `side-games/online-v2.js` (6, + `?v=`), `side-games/reverse-xi/reverse-xi.css` (1, + `?v=`) | Yazı tipi tanımlarına `system-ui,sans-serif` yedeği |
+| Oyun mantığı | Değişmedi |
