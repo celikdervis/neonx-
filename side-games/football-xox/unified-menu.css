@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&display=swap');
+@import url('../../assets/fonts/neon-fonts.css?v=20261119-fonts-1');
 /* Approved 29 September XOX menu. All selectors are scoped to the menu. */
 body[data-ct-screen="menu"]{padding:0!important;background:#030807!important;overflow-x:hidden;font-family:Barlow,Arial,sans-serif}
 body[data-ct-screen="menu"]::before,body[data-ct-screen="menu"]::after{display:none!important}

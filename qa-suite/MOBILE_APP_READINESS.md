@@ -28,7 +28,7 @@ gönderilirse büyük olasılıkla reddedilir veya bazı akışlar uygulama içi
 | E-3 | **Uygulama içinden hesap silme** | Kodda hesap/veri silme yok (`deleteUser` 0 eşleşme) | Hesap oluşturulabilen uygulamalarda Apple (5.1.1(v)) ve Google Play hesap silme yolu ister | Profil, kullanıcı adı, arkadaşlık, parti, istatistik ve skor kayıtlarını temizleyen akış. Güvenilir olması için sunucu tarafında (Cloud Functions) yapılmalı |
 | E-4 | **Kullanıcı içeriği denetimi** | Kullanıcı adları ve arkadaşlık sistemi var; engelleme veya şikâyet yok | Sosyal özellikli uygulamalarda içerik filtreleme, kullanıcı engelleme ve şikâyet mekanizması beklenir (Kılavuz 1.2) | Kullanıcı adı filtresi, "engelle", "şikâyet et" ve bunların veritabanı kuralları |
 | E-5 | **Gizlilik politikası ve veri beyanları** | Uygulamada gizlilik politikası bağlantısı yok; Google Tag Manager (`G-GC90PB01KV`) yükleniyor | Her iki mağaza gizlilik politikası URL'si ve uygulama içi erişim ister; App Privacy etiketleri ve Play Data Safety formu doldurulmalı | Politika metni ve bağlantısı; analitik kapsamının beyanı; iOS Privacy Manifest |
-| E-6 | **Uzak koddan bağımsızlık** | Firebase SDK `www.gstatic.com`'dan (53 referans), PeerJS `unpkg.com`'dan, yazı tipleri Google Fonts'tan, bayraklar `flagcdn.com`'dan çalışma anında yükleniyor | Çalıştırılabilir kodun uzaktan yüklenmesi Apple kurallarıyla (2.5.2) çatışabilir; çevrim dışı veya kısıtlı ağda uygulama açılmaz ya da yazı tipleri bozulur (XOX/Imposter başlık çakışması, RE:VERSE serif görünümü yazı tipi gelmeyince görülüyor) | SDK, PeerJS, yazı tipleri ve bayrakları uygulama paketine almak; içe aktarmaları yerel yollara çevirmek |
+| E-6 | **Uzak koddan bağımsızlık** | Firebase SDK `www.gstatic.com`'dan (53 referans), PeerJS `unpkg.com`'dan, yazı tipleri Google Fonts'tan, bayraklar `flagcdn.com`'dan çalışma anında yükleniyor | Çalıştırılabilir kodun uzaktan yüklenmesi Apple kurallarıyla (2.5.2) çatışabilir; çevrim dışı veya kısıtlı ağda uygulama açılmaz ya da yazı tipleri bozulur (XOX/Imposter başlık çakışması, RE:VERSE serif görünümü yazı tipi gelmeyince görülüyor) | SDK, PeerJS, yazı tipleri ve bayrakları uygulama paketine almak; içe aktarmaları yerel yollara çevirmek. **Kısmen yapıldı (2026-11-19):** yan oyunların yazı tipleri artık `assets/fonts/`'tan geliyor (Google Fonts isteği 0; `fonts-local.spec.mjs` 8 sayfa). Kalan: Draft/çekirdek yazı tipleri (kapsam dışı), Firebase SDK, PeerJS, bayraklar |
 | E-7 | **Veritabanı güvenliği** | Kurallar depoda yok (S-01); istemci kendi skorunu yazıyor (S-02); eşleştirme tüm kuyruğa yazma izni gerektiriyor (S-03); App Check yok (S-04) | Mağazada görünürlük arttıkça kötüye kullanım riski artar | Kuralların gözden geçirilmesi; yerel uygulamada App Check (iOS App Attest / Android Play Integrity) |
 | E-8 | **Çevrim dışı durum** | Ağ yoksa `index.html` "NEON XI yüklenemedi" gösteriyor (çekirdek `fetch` edilemezse) | Apple, ağ yokken boş veya bozuk ekran gösteren uygulamaları reddedebilir | Yerel paketle çekirdek her zaman yerelden gelir; Firebase bağlantısı yokken anlamlı "çevrim dışı" ekranı |
 
@@ -68,6 +68,17 @@ gönderilirse büyük olasılıkla reddedilir veya bazı akışlar uygulama içi
 | C | Hesap silme, engelleme, şikâyet, gizlilik politikası (sunucu tarafı dahil) | Ürün kararı |
 | D | Push bildirimleri, Universal/App Links | B, C |
 | E | Güvenlik kuralları ve App Check incelemesi; kapalı test (TestFlight / Play iç test) | Güvenlik aşaması |
+
+## İlerleme günlüğü
+
+| Tarih | Adım | Engel | Durum |
+|---|---|---|---|
+| 2026-11-19 | Yan oyun yazı tipleri yerelde (OFL, `scripts/build_self_hosted_fonts.mjs`) | E-6 | Yapıldı, testli |
+| 2026-11-19 | Ana ekran görselleri WebP, tek yükleme ekranı | Performans | Yapıldı, ölçüldü (PERFORMANCE_REPORT §9) |
+| 2026-11-19 | Splash animasyonu kalktıktan sonra duruyor (pil) | Performans | Yapıldı, testli |
+| 2026-11-19 | Kısa telefon düzenleri: Wordle klavyesi, Career Twin menüsü, XOX seçici | Mobil UX | Yapıldı, 7 cihaz profilinde testli |
+| 2026-11-19 | RE:VERSE mikrofonu tek yakalama hattı, iOS dokunuş kuralı, tanı paneli | Mobil donanım | Kodda yapıldı; **gerçek cihaz testi BLOCKED** |
+| — | Capacitor iskeleti, yerel Google/Apple girişi, hesap silme, engelle/şikâyet, gizlilik politikası, App Check | E-1…E-5, E-7 | **Yapılmadı** (ürün/altyapı kararı ve hesap erişimi gerekiyor) |
 
 ## RE:VERSE — gerçek cihazda yapılması gereken testler
 

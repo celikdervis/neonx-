@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>İMPOSTOR 11 — Futbolcu İmposter Oyunu</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;900&family=Rajdhani:wght@500;600;700&display=swap');
+@import url('../assets/fonts/neon-fonts.css?v=20261119-fonts-1');
 
 :root{
   --bg: #04070a;

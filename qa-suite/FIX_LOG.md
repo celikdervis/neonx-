@@ -105,3 +105,23 @@ bu sürüm dizelerinin güncellenmesi önerilir. Bu çalışmada HTML dosyaları
 | Neden bu yol | Eşleştirme transaction'ı kuyruk düğümünün tamamında, iptal ise oyuncunun alt düğümünde karşılaştır-yaz yapıyor. Hangisi sunucuya önce ulaşırsa diğeri çakışma alıp güncel veriyle yeniden çalışıyor; iki taraf aynı sonucu görüyor. Eşleşmeyi bozup rakibi kuyruğa geri almak daha karmaşık ve rakip zaten yönlendirilmiş olabiliyor |
 | Draft | `mode==='draft'` için iki dosyada da orijinal iptal yolu aynen korundu (Draft kapsam dışı). Draft'ta B-03 açık kalıyor |
 | Etkilenen diğer akışlar | M-01…M-05, B-02, P-01…P-12 yeniden çalıştırıldı: PASS. Eşleşme dinleyicisi yan sayfada `followMatch` fonksiyonuna taşındı; URL parametreleri aynı |
+
+## FIX-10 → PERF-09 (splash döngüsü)
+
+| | |
+|---|---|
+| Dosya | `side-games/neon-splash-safe-v1.js` |
+| Önce | Splash kalktıktan sonra harf animasyonu (rAF, `getPointAtLength`, kıvılcım DOM düğümleri) ~9 sn'de bir kendini yeniden başlatıyor, 3,2 sn'lik ipucu sayacı çalışmaya devam ediyordu. `show()` yeniden çağrılınca (maç ön yükleyicisi) döngüler üst üste biniyordu |
+| Sonra | Her adım, kendi katmanının hâlâ `NX_SPLASH.root` olup olmadığına bakıyor; değilse duruyor. Sayaç kendini temizliyor. `show()/hide()` sözleşmesi aynı |
+| Ölçüm | Kaldırılmış katmanda 12 sn'de çizim çağrısı: 287 → 0 (tekrar gösterimden sonra 500 → 0). Boşta CPU payı 28 ms → 0 ms (3 × 20 sn); küçük |
+| Bilerek dokunulmayan | `hide()` sonrası 320 ms içinde `show()` çağrılırsa eski kaldırma zamanlayıcısının katmanı yine silmesi (önceden var olan, yalnızca Draft maç ön yükleyicisini ilgilendiren durum) |
+
+## FIX-11 → Yazı tiplerini yerelleştirme (E-6, kısmen)
+
+| | |
+|---|---|
+| Yeni | `assets/fonts/neon-fonts.css` + 34 woff2 (Orbitron 600–900, Rajdhani 500–700, Barlow 400–700, Barlow Condensed 500–900 ve italik 700–900; latin + latin-ext, `unicode-range` ile yalnızca kullanılan dosya iner), OFL lisans dosyaları, üretici `scripts/build_self_hosted_fonts.mjs` (@fontsource 5.3.0) |
+| Değişen | 11 dosyadaki Google Fonts `@import` satırı yerel sayfaya çevrildi: career-twin `premium-mobile.css`, `xox-family-ui-v1.css`; `en11/index.html`; `football-wordle/index.html`; `football-xox/index.html`, `unified-menu.css`, `xox-premium-game-v2.css`; `how-to-play.html`; `imposter-xox-family-v1.css`; `side-games/index.html`; `reverse-xi.css`; ayrıca Imposter'ın parça dosyası `parts/part01.txt`. Değişen stil dosyalarının `?v=` etiketleri |
+| Kazanç | Yan sayfalarda üçüncü taraf yazı tipi isteği yok (iki köken: fonts.googleapis.com, fonts.gstatic.com). Ağ kısıtlıyken veya uygulama paketinde yazı tipleri bozulmuyor (daha önce XOX/Imposter başlık çakışmasının ve RE:VERSE serif görünümünün sebebi yazı tipinin gelmemesiydi). Kullanıcı IP'si Google'a gitmiyor (gizlilik beyanı) |
+| Ölçülmeyen | Sayfa açılış süresine etkisi ölçülmedi: önceki ölçümlerde Google Fonts istekleri test düzeneğinde engelleniyordu, karşılaştırma adil olmazdı |
+| Dokunulmayan | `draft-mobile.css` ve çekirdekteki (Draft) yazı tipi içe aktarmaları |
