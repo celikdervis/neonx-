@@ -164,3 +164,21 @@ giden WAV çözülüp sesli olduğu ve **ters çevrildiği** (yükselen tarama �
 `reverse-xi.css` içinde 17 adet `font: … Orbitron` tanımında yedek yazı tipi yoktu. Orbitron yüklenene kadar ya da hiç
 yüklenemezse başlıklar Times benzeri serif yazı tipiyle görünüyordu. Yedek olarak `system-ui, sans-serif` eklendi.
 Çevrim dışı çalışacak mobil uygulama için yazı tiplerinin yerel olarak paketlenmesi ayrıca öneriliyor (bkz. `MOBILE_APP_READINESS.md`).
+
+## B-06 — XOX oyuncu seçme penceresi alt gezinme çubuğunun altında kalıyor
+
+| Alan | Değer |
+|---|---|
+| Modül | Futbol XOX · P2 · **FIXED (Chromium'da doğrulandı)** |
+| Gerçekleşen | Pencere `z-index:30`, ortak alt çubuk (`#nx-arcade-footer`) `z-index:9000`. Sonuç listesinin alt kısmı çubuğun arkasında kalıyor ve dokunuş çubuğa gidiyor. Test, orijinal kodda 3 ekran boyutunun 3'ünde de (masaüstü dahil) doğru cevaba tıklayamadı. Kanıt: `evidence/xox-picker-under-bottom-bar-before.png` |
+| Düzeltme | `xox-dark-arena.css`: pencere `z-index:9600` ve alt güvenli alan payı |
+| Test | X-01: görünür sonuçların hiçbiri başka bir katmanın altında değil (×5, 3 cihaz) |
+
+## UX-03..05 — XOX tahta okunabilirliği (oyun kuralları değişmedi)
+
+| ID | Sorun | Düzeltme | Doğrulama |
+|---|---|---|---|
+| UX-03 | Kulüp/ülke/oyuncu adları kelime ortasından bölünüyordu ("Beşikta/ş", "Juvent/us", "Leverkuse/n"): 5 stil katmanında `overflow-wrap:anywhere` | Kelime bölme kapatıldı; sığmayan kelime 0,5 px adımlarla küçültülüyor (en az 9 px), yalnızca o da yetmezse bölünüyor. Dar telefonlarda başlık kutusu yan boşluğu 8 → 4 px | X-02: 20 rastgele tahtada taşma 0; iPhone SE en küçük 9 px, Galaxy S8 11 px, Pixel 7 10,5 px; bölünmeye düşen 0 |
+| UX-04 | Kazanan çizgi isimlerin üstünden geçip onları üstü çizili gösteriyordu | Çizgi kare dolgusunun üstünde, isimlerin altında; isimlere koyu hale; çizgi tamamlanınca kazanan kareler bir kez parlıyor (`prefers-reduced-motion`'a uyar) | X-01 (z-sırası ve `isolation`) + görsel (`evidence/xox-before-after-iphone-se.png`) |
+| UX-05 | Maç bitince "OYUNCU 1 KAZANDI" kartı alt çubuğun arkasında kalıyordu | Oyun bitince (kazanma veya beraberlik) kart, alt çubuğun üstünde görünecek şekilde kaydırılıyor | X-01 |
+| — | Menüde "FUTBOL XOX" başlığının amblemle çakışması | **Hata değil:** test ortamında Google Fonts engelli olduğu için yedek yazı tipinden kaynaklanıyordu; gerçek yazı tipiyle çakışma yok. Yavaş ağda yazı tipi gelene kadar (`display=swap`) görülebilir → yazı tiplerinin uygulamaya paketlenmesi önerisi | Gerçek yazı tipiyle ölçüm |
