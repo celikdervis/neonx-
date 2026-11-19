@@ -148,3 +148,19 @@ giden WAV çözülüp sesli olduğu ve **ters çevrildiği** (yükselen tarama �
 | Düzeltme öncesi (13 test) | 9 FAIL, 4 PASS (masaüstü ve Android'de tam iki tur, iz kesilmesi ve masaüstü tanıma geçiyordu) |
 | Düzeltme sonrası (15 test × 5 tekrar) | **75/75 PASS** |
 | Ayırt edicilik (orijinal koda karşı, 15 test) | 11 FAIL, 4 PASS |
+
+## B-05 — RE:VERSE adım başlığı oyun boyunca hiç güncellenmiyor
+
+| Alan | Değer |
+|---|---|
+| Modül | RE:VERSE · P3 · **FIXED (Chromium'da doğrulandı)** |
+| Gerçekleşen | A tüm oyun boyunca "Arkadaşını bekliyoruz · Oda kodunu paylaş", B ise "Rakip bekleniyor" görüyordu |
+| Kök neden | `updateStage()` her faz için başlık ve açıklama metnini hesaplıyor ama ekrana yalnızca "B henüz yok" dalında yazıyordu |
+| Düzeltme | Hesaplanan başlık ve açıklama her güncellemede `#step-title` / `#step-desc` alanlarına yazılıyor |
+| Test | R-10: düzeltme öncesi FAIL, sonrası PASS (×5) |
+
+## UX-02 — RE:VERSE başlıklarında yazı tipi yedeği yok
+
+`reverse-xi.css` içinde 17 adet `font: … Orbitron` tanımında yedek yazı tipi yoktu. Orbitron yüklenene kadar ya da hiç
+yüklenemezse başlıklar Times benzeri serif yazı tipiyle görünüyordu. Yedek olarak `system-ui, sans-serif` eklendi.
+Çevrim dışı çalışacak mobil uygulama için yazı tiplerinin yerel olarak paketlenmesi ayrıca öneriliyor (bkz. `MOBILE_APP_READINESS.md`).

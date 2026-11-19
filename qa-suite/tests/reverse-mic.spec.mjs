@@ -85,3 +85,15 @@ test.use(fakeMic(FIX.chirp));
     await expect(A.page.locator('#heard-result')).toBeVisible();
     expect(await A.page.evaluate(() => window.__qa.gum)).toBe(1);
   });
+
+test('R-10 the step header tells both players whose move it is, in every phase', async ({ users, rtdb }) => {
+  const A = await open(users, 'A'), B = await open(users, 'B');
+  const code = await startRoom(rtdb, A, B);
+  for (const u of [A, B]) await expect(u.page.locator('#step-title')).toHaveText('A oyuncusu futbolcu ismini söylüyor');
+  await record(A, '#record-name', 1500);
+  await A.page.locator('#manual-name').fill('Arda Güler');
+  await A.page.locator('#confirm-name').click();
+  await waitForDb(rtdb, `reverseXI/rooms/${code}/phase`, v => v === 'imitate');
+  for (const u of [A, B]) await expect(u.page.locator('#step-title')).toHaveText('B oyuncusu ters sesi taklit ediyor');
+  for (const u of [A, B]) await expect(u.page.locator('#step-desc')).not.toContainText('paylaş');
+});
