@@ -35,6 +35,19 @@ FIREBASE_SDK_DIR=<firebase@12.16.0 kurulu klasör> npx playwright test -c qa-sui
 `FIREBASE_SDK_DIR` verilmezse karşılaştırma testi **skipped** olarak raporlanır, PASS sayılmaz.
 Ham çıktılar `qa-suite/.artifacts/` altına yazılır ve git'e eklenmez.
 
+## Performans ölçümü
+
+```bash
+node qa-suite/perf/measure.mjs --label <ad> --runs 5            # ana sayfa (fast/mid/low, soğuk/önbellekli/oturum kapalı), yan sayfalar, sosyal panel, boşta CPU
+node qa-suite/perf/measure.mjs --label <ad> --only home --homeKeys mid-cold --sdkDelay 8000,12000
+node qa-suite/perf/cpu-profile.mjs --label <ad> --cpu 4 --runs 3  # açılışta dosya başına CPU
+node qa-suite/perf/cpu-profile.mjs --label <ad> --idle 20         # boşta dosya başına CPU
+```
+
+Ölçümler, GitHub Pages'e yakın davranan `perf/static-server.mjs` (gzip, `max-age=600`) ile ve HTTP önbelleğini bozmamak için
+Playwright `route()` yerine CDP `Fetch` (yalnızca `https://`) ile yapılır. Temel değerler `perf/baseline-summary.json`
+dosyasında. Karşılaştırma için aynı komutlar aynı makinede çalıştırılmalıdır.
+
 ## Kullanıcı modeli
 
 Her kullanıcı (A, B, C, D) ayrı bir Playwright **browser context**'idir: ayrı localStorage,
@@ -57,3 +70,6 @@ Ağ kopması, `window.__NX_MOCK_NET__.drop()/restore()` ile yalnızca o kullanı
 | `MULTIPLAYER_SCENARIOS.md` | 2/3/4 kullanıcılı senaryolar ve her ekranda görülen |
 | `BLOCKED_TESTS.md` | Ortam nedeniyle yapılamayanlar |
 | `SECURITY_BACKLOG.md` | Bu çalışmaya dahil edilmeyen güvenlik riskleri |
+| `PERFORMANCE_REPORT.md` | Performans ölçümleri, darboğazlar, önce/sonra takibi |
+| `ARCHITECTURE_AUDIT.md` | Açılış zinciri, çekirdek içeriği, script envanteri, tekrarlar, hedef mimari |
+| `evidence/` | Kare görüntüleri (film şeridi) |

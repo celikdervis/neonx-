@@ -1,0 +1,329 @@
+{
+ "label": "baseline-idle",
+ "cpu": 4,
+ "runs": 2,
+ "interactive": 11861,
+ "sampledMs": 20181,
+ "rows": [
+  [
+   "/online-mobile-navigation-fix-v1.js",
+   8663
+  ],
+  [
+   "/prematch-mobile-v2.js",
+   8364
+  ],
+  [
+   "/index.html (boot/inline)",
+   1545
+  ],
+  [
+   "((program))",
+   825
+  ],
+  [
+   "((garbage collector))",
+   323
+  ],
+  [
+   "core#0",
+   317
+  ],
+  [
+   "/match-stadium-user-v3.js",
+   134
+  ],
+  [
+   "/side-games/neon-splash-safe-v1.js",
+   43
+  ],
+  [
+   "/public-source-ui-guard-v1.js",
+   38
+  ],
+  [
+   "((idle))",
+   26
+  ],
+  [
+   "/match-2d-compositor-v2.js",
+   26
+  ],
+  [
+   "/chem-inspector-fix.js",
+   18
+  ],
+  [
+   "/side-games/home-approved-v1.js",
+   12
+  ],
+  [
+   "(QA probe — measurement overhead)",
+   11
+  ],
+  [
+   "/side-games/tournament-back-safe-v2.js",
+   10
+  ],
+  [
+   "/draft-mobile-ui.js",
+   8
+  ],
+  [
+   "/match-2d-performance-sync-v1.js",
+   4
+  ],
+  [
+   "/match-depth.js",
+   4
+  ],
+  [
+   "/social/neon-social-badge-click-v1.js",
+   1
+  ]
+ ],
+ "nativeRows": [
+  [
+   "getBoundingClientRect",
+   2060
+  ],
+  [
+   "querySelectorAll",
+   862
+  ],
+  [
+   "getComputedStyle",
+   699
+  ],
+  [
+   "remove",
+   38
+  ],
+  [
+   "querySelector",
+   32
+  ],
+  [
+   "requestAnimationFrame",
+   31
+  ],
+  [
+   "setAttribute",
+   27
+  ],
+  [
+   "getElementById",
+   23
+  ],
+  [
+   "setItem",
+   19
+  ],
+  [
+   "add",
+   15
+  ],
+  [
+   "setTimeout",
+   10
+  ],
+  [
+   "insertAdjacentElement",
+   9
+  ]
+ ],
+ "coreBlocks": [
+  {
+   "i": 0,
+   "startLine": 9,
+   "endLine": 16,
+   "id": "nx-core-entry-guard",
+   "head": "// The core is loaded by index.html, which also installs the current U",
+   "bytes": 286
+  },
+  {
+   "i": 1,
+   "startLine": 1724,
+   "endLine": 1836,
+   "id": "",
+   "head": "/* Ana menü, Firebase ve maç motoru yüklenmesinden bağımsız çalışır. *",
+   "bytes": 107435
+  },
+  {
+   "i": 2,
+   "startLine": 1884,
+   "endLine": 2047,
+   "id": "",
+   "head": "const PLAYERS = [{\"id\":\"gk1\",\"name\":\"Alisson\",\"pos\":\"GK\",\"age\":33,\"nat",
+   "bytes": 60818
+  },
+  {
+   "i": 3,
+   "startLine": 2464,
+   "endLine": 2579,
+   "id": "",
+   "head": "(() => { \"use strict\"; const matchOverlay = document.createElement(\"di",
+   "bytes": 3991
+  },
+  {
+   "i": 4,
+   "startLine": 3052,
+   "endLine": 3773,
+   "id": "",
+   "head": "(() => { /* * KADRO v1.12 * - Genişletilmiş oyuncu havuzu * - Demo Spi",
+   "bytes": 122544
+  },
+  {
+   "i": 5,
+   "startLine": 3949,
+   "endLine": 6263,
+   "id": "",
+   "head": "(() => { /* * KADRO v1.13 * Formation Identity + Multi Position Draft ",
+   "bytes": 47942
+  },
+  {
+   "i": 6,
+   "startLine": 6263,
+   "endLine": 9144,
+   "id": "",
+   "head": "(() => { \"use strict\"; /* * Spiker Motoru v2 — Birleştirilmiş Sebep–So",
+   "bytes": 176034
+  },
+  {
+   "i": 7,
+   "startLine": 9889,
+   "endLine": 11220,
+   "id": "",
+   "head": "(() => { \"use strict\"; /* KADRO v1.19 — güvenilir ortak maç + düşük ka",
+   "bytes": 40906
+  },
+  {
+   "i": 8,
+   "startLine": 11220,
+   "endLine": 12253,
+   "id": "",
+   "head": "import { initializeApp } from \"https://www.gstatic.com/firebasejs/12.1",
+   "bytes": 34437
+  },
+  {
+   "i": 9,
+   "startLine": 12434,
+   "endLine": 13136,
+   "id": "",
+   "head": "(() => { \"use strict\"; /* KADRO v1.20 — rastgele kadrolu kolay / orta ",
+   "bytes": 26230
+  },
+  {
+   "i": 10,
+   "startLine": 13136,
+   "endLine": 13905,
+   "id": "",
+   "head": "/* * KADRO v1.21 — Hard Match Sync * * Bu katman mevcut online sistemi",
+   "bytes": 16208
+  },
+  {
+   "i": 11,
+   "startLine": 13923,
+   "endLine": 13972,
+   "id": "",
+   "head": "(() => { \"use strict\"; const nav=document.getElementById(\"neonScreenNa",
+   "bytes": 4115
+  },
+  {
+   "i": 12,
+   "startLine": 13973,
+   "endLine": 14575,
+   "id": "",
+   "head": "/* * NEON XI — URL rotaları + her tam açılışta temiz ana menü * GitHub",
+   "bytes": 20585
+  },
+  {
+   "i": 13,
+   "startLine": 14600,
+   "endLine": 14866,
+   "id": "neon-random-squad-engine",
+   "head": "(() => { \"use strict\"; const BUTTON_ID = \"randomSquadBtn\"; let onlineA",
+   "bytes": 8627
+  },
+  {
+   "i": 14,
+   "startLine": 14867,
+   "endLine": 14993,
+   "id": "",
+   "head": "(() => { \"use strict\"; /* NEON XI V3 FINAL UI + STATE LAYER 2026-07-24",
+   "bytes": 19276
+  },
+  {
+   "i": 15,
+   "startLine": 15043,
+   "endLine": 15788,
+   "id": "",
+   "head": "(() => { const overlay=document.getElementById(\"matchSimulation\"); if(",
+   "bytes": 49784
+  },
+  {
+   "i": 16,
+   "startLine": 15888,
+   "endLine": 15983,
+   "id": "neon-xi-mobile-behaviour-fixes",
+   "head": "(() => { \"use strict\"; let slotFixFrame = 0; function fixMobileTacticS",
+   "bytes": 2722
+  },
+  {
+   "i": 17,
+   "startLine": 16033,
+   "endLine": 16390,
+   "id": "neon-xi-v4-presentation-script",
+   "head": "(() => { \"use strict\"; if (window.NEON_XI_V4_PRESENTATION) return; win",
+   "bytes": 19935
+  },
+  {
+   "i": 18,
+   "startLine": 16473,
+   "endLine": 16809,
+   "id": "neon-xi-v45-prematch",
+   "head": "(() => { \"use strict\"; if (window.NEON_XI_V45_PREMATCH) return; window",
+   "bytes": 13867
+  },
+  {
+   "i": 19,
+   "startLine": 16946,
+   "endLine": 17273,
+   "id": "neon-xi-event-cinema",
+   "head": "(() => { \"use strict\"; const MEDIA = { penalty: [ \"NEON_XI_penalti_ani",
+   "bytes": 13763
+  },
+  {
+   "i": 20,
+   "startLine": 17275,
+   "endLine": 17439,
+   "id": "neon-xi-real-tournament-bridge",
+   "head": "(() => { \"use strict\"; const ctx = { active:null, resultSent:false, or",
+   "bytes": 8950
+  },
+  {
+   "i": 21,
+   "startLine": 17441,
+   "endLine": 17472,
+   "id": "neon-xi-tournament-online-transport",
+   "head": "import { getApp, getApps, initializeApp } from \"https://www.gstatic.co",
+   "bytes": 6567
+  },
+  {
+   "i": 22,
+   "startLine": 17474,
+   "endLine": 17513,
+   "id": "neon-xi-settings-controller",
+   "head": "(() => { \"use strict\"; const STORAGE_KEY = \"neon-xi-settings-v1\"; cons",
+   "bytes": 6138
+  },
+  {
+   "i": 23,
+   "startLine": 17516,
+   "endLine": 17517,
+   "id": "",
+   "head": "",
+   "bytes": 0
+  }
+ ]
+}
