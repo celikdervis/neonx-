@@ -125,3 +125,12 @@ bu sürüm dizelerinin güncellenmesi önerilir. Bu çalışmada HTML dosyaları
 | Kazanç | Yan sayfalarda üçüncü taraf yazı tipi isteği yok (iki köken: fonts.googleapis.com, fonts.gstatic.com). Ağ kısıtlıyken veya uygulama paketinde yazı tipleri bozulmuyor (daha önce XOX/Imposter başlık çakışmasının ve RE:VERSE serif görünümünün sebebi yazı tipinin gelmemesiydi). Kullanıcı IP'si Google'a gitmiyor (gizlilik beyanı) |
 | Ölçülmeyen | Sayfa açılış süresine etkisi ölçülmedi: önceki ölçümlerde Google Fonts istekleri test düzeneğinde engelleniyordu, karşılaştırma adil olmazdı |
 | Dokunulmayan | `draft-mobile.css` ve çekirdekteki (Draft) yazı tipi içe aktarmaları |
+
+## FIX-12 → PeerJS'i yerelden yükleme (E-6, kısmen)
+
+| | |
+|---|---|
+| Yeni | `vendor/peerjs/peerjs-1.5.5.min.js` (npm `peerjs@1.5.5` paketindeki dosyanın aynısı; paket shasum kayıt defteriyle eşleşti), MIT lisansı, kaynak notu |
+| Değişen | `side-games/en11/index.html`, `side-games/career-twin/game.js`, `side-games/parts/part05.txt`: `https://unpkg.com/peerjs@1.5.5/...` → yerel yol |
+| Bulgu | PeerJS'i gerçekten yükleyen tek sayfa EN11. Career Twin `firebase-peer-shim-v1.js` ile `window.Peer`'i Firebase üzerinden sağlıyor; Imposter'da `online-base44-imposter.js`, `ensurePeerJS`'i boş fonksiyonla değiştiriyor. Bu iki sayfadaki satırlar yedek yol |
+| Test | `peerjs-local.spec.mjs` 9/9: unpkg isteği yok; EN11'de yerel dosya 200 ve `window.Peer` tanımlı. EN11'in P2P oyunu (PeerJS bulut sinyal sunucusu gerekli) **BLOCKED** |

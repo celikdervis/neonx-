@@ -266,7 +266,7 @@
     }
     async function loadPeer(){
       if(window.Peer)return;
-      await new Promise(function(resolve,reject){const s=document.createElement('script');s.src='https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js';s.onload=resolve;s.onerror=reject;document.head.appendChild(s)});
+      await new Promise(function(resolve,reject){const s=document.createElement('script');s.src='../../vendor/peerjs/peerjs-1.5.5.min.js';s.onload=resolve;s.onerror=reject;document.head.appendChild(s)});
     }
     function cleanup(){try{if(S.conn)S.conn.close()}catch(e){}try{if(S.peer)S.peer.destroy()}catch(e){}S.conn=null;S.peer=null}
     function randomCode(){return String(Math.floor(1000+Math.random()*9000))}

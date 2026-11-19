@@ -58,7 +58,7 @@ function ensurePeerJS(){
       return;
     }
     const s = document.createElement('script');
-    s.src = 'https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js';
+    s.src = '../vendor/peerjs/peerjs-1.5.5.min.js';
     s.async = true;
     s.dataset.neonPeerjs = '1';
     s.onload = () => window.Peer ? resolve(window.Peer) : reject(new Error('peerjs-load'));
