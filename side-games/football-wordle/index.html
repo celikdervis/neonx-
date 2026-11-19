@@ -19,7 +19,7 @@ body:after{content:"";position:fixed;z-index:0;left:50%;top:0;width:min(76vw,460
 .back:active,.new:active{transform:translateY(1px);border-color:var(--led);box-shadow:0 0 16px rgba(169,255,47,.18)}
 .brand{text-align:center;min-width:0;padding:7px 0}
 .eyebrow{font:800 8px 'Orbitron',sans-serif;letter-spacing:.25em;color:var(--cyan);text-shadow:0 0 10px rgba(22,237,255,.38)}
-h1{font:900 clamp(18px,5.7vw,28px) 'Orbitron',sans-serif;letter-spacing:.035em;line-height:1;margin:4px 0 0;white-space:nowrap;background:linear-gradient(90deg,#f7fff6 4%,var(--led) 42%,#edffdd 62%,var(--cyan) 98%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 9px rgba(169,255,47,.26))}
+h1{font:900 clamp(18px,5.7vw,28px) 'Orbitron',sans-serif;font-size:min(clamp(18px,5.7vw,28px),calc((100vw - 184px) / 12.6));letter-spacing:.035em;line-height:1;margin:4px 0 0;white-space:nowrap;background:linear-gradient(90deg,#f7fff6 4%,var(--led) 42%,#edffdd 62%,var(--cyan) 98%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 9px rgba(169,255,47,.26))}
 .meta{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin:5px 0 11px}
 .pill{position:relative;overflow:hidden;font-size:10px;font-weight:800;letter-spacing:.05em;color:#b8cec3;border:1px solid rgba(169,255,47,.16);background:rgba(5,13,10,.82);border-radius:999px;padding:5px 9px;box-shadow:inset 0 0 14px rgba(169,255,47,.025)}
 .pill strong{color:var(--led);text-shadow:0 0 8px rgba(169,255,47,.24)}
@@ -50,8 +50,18 @@ h1{font:900 clamp(18px,5.7vw,28px) 'Orbitron',sans-serif;letter-spacing:.035em;l
 .result{display:none;margin:12px 0 0;border:1px solid rgba(169,255,47,.3);border-radius:18px;background:linear-gradient(180deg,rgba(8,20,15,.96),rgba(3,11,8,.96));padding:15px;text-align:center;box-shadow:0 0 24px rgba(169,255,47,.07),inset 0 0 24px rgba(169,255,47,.025)}.result.show{display:block}.result .label{font-size:9px;letter-spacing:.2em;color:var(--cyan);font-weight:800}.result .player{font:800 20px 'Orbitron',sans-serif;margin-top:6px;color:#fff;text-shadow:0 0 12px rgba(169,255,47,.12)}.result .answer{color:var(--led);font-weight:900;letter-spacing:.15em;margin-top:5px;text-shadow:0 0 10px rgba(169,255,47,.35)}.result button{margin-top:11px;min-height:44px;border:1px solid #d9ff8e;border-radius:12px;background:linear-gradient(180deg,#b8ff4e,#81d821);color:#071005;font:900 11px 'Orbitron',sans-serif;padding:0 16px;cursor:pointer;box-shadow:0 0 14px rgba(169,255,47,.25)}
 .note{text-align:center;color:#4e695c;font-size:10px;line-height:1.4;margin:11px 10px 0}.note b{color:#8ba497}.shake{animation:shake .25s linear}@keyframes shake{25%{transform:translateX(-4px)}50%{transform:translateX(4px)}75%{transform:translateX(-3px)}}
 @media(hover:hover) and (pointer:fine){.back:hover,.new:hover,.key:hover{border-color:rgba(169,255,47,.72);box-shadow:0 0 12px rgba(169,255,47,.12)}}
-@media(max-width:370px){body{padding-inline:8px}.boardWrap{padding-inline:5px}.guessRow{gap:3px}.keyRow{gap:3px}.keyboard{gap:4px;padding-inline:3px}.key{height:42px}.top{grid-template-columns:62px minmax(0,1fr) 62px;gap:4px}.back,.new{padding:0 7px;font-size:9px}.eyebrow{font-size:7px}}
+@media(max-width:370px){body{padding-inline:8px}.boardWrap{padding-inline:5px}.guessRow{gap:3px}.keyRow{gap:3px}.keyboard{gap:4px;padding-inline:3px}.key{height:42px}h1{font-size:min(clamp(18px,5.7vw,28px),calc((100vw - 160px) / 12.6))}.top{grid-template-columns:62px minmax(0,1fr) 62px;gap:4px}.back,.new{padding:0 7px;font-size:9px}.eyebrow{font-size:7px}}
 @media(prefers-reduced-motion:reduce){.tile,.key,.back,.new{animation:none!important;transition:none!important}}
+
+/* Short phones (iPhone SE/8/13 mini in Safari): tighter vertical rhythm so the board
+   and the on-screen keyboard fit above the shared bottom bar. Same look, less air. */
+@media (max-height:700px) and (orientation:portrait){
+.top{margin-bottom:4px}.meta{margin-top:2px!important;margin-bottom:6px!important}
+.boardWrap{padding-top:10px!important;padding-bottom:6px!important}
+.board{row-gap:5px}
+.keyboard{margin-top:6px!important;gap:4px!important;padding-top:6px!important;padding-bottom:6px!important}
+.key{height:40px!important}
+}
 </style>
 <link rel="stylesheet" href="../neon-arcade-ui-v1.css?v=20260928-home-identical-nav-v6">
 </head>
@@ -126,5 +136,23 @@ newGame();
 <script type="module" src="../../social/neon-social.js?v=20260928-home-identical-nav-v6"></script>
 <script src="../neon-arcade-ui-v1.js?v=20260928-home-identical-nav-v6"></script>
 <script type="module" src="../../social/neon-social-consistency-v1.js?v=20260928-home-identical-nav-v6"></script>
+<script>
+/* Short phones: shrink the board (never the keyboard; tiles never below 28 px) so
+   the whole game fits above the space the page reserves for the shared bottom bar.
+   Sets `width`, so the game's own max-width (e.g. for short words) always wins;
+   proportional and idempotent: repeated calls converge instead of resetting. */
+(()=>{const board=document.getElementById('board'),keyboard=document.getElementById('keyboard');if(!board||!keyboard)return;
+const MIN_TILE=28,reserve=()=>document.body.classList.contains('nx-arcade-has-footer')?parseFloat(getComputedStyle(document.body).paddingBottom)||0:0;
+const natural=()=>{const p=board.parentElement,s=getComputedStyle(p);return p.clientWidth-parseFloat(s.paddingLeft)-parseFloat(s.paddingRight)};
+const minWidth=()=>{const cols=parseInt(getComputedStyle(board).getPropertyValue('--cols'),10)||5,row=board.firstElementChild,gap=row?parseFloat(getComputedStyle(row).columnGap)||0:0;return cols*MIN_TILE+(cols-1)*gap};
+let queued=false;const fit=()=>{queued=false;if(!board.isConnected)return;
+for(let i=0;i<5;i++){const full=natural(),b=board.getBoundingClientRect(),k=keyboard.getBoundingClientRect();if(!b.height||!full)return;
+const overflow=k.bottom+scrollY-(innerHeight-reserve()-6);if(overflow<=0&&!board.style.width)return;
+const target=Math.min(full,Math.max(minWidth(),b.width*(b.height-overflow)/b.height));
+if(Math.abs(target-b.width)<1)return;board.style.width=target>=full-.5?'':Math.floor(target)+'px'}};
+const queue=()=>{if(queued)return;queued=true;requestAnimationFrame(fit)};
+addEventListener('resize',queue,{passive:true});addEventListener('orientationchange',queue);addEventListener('load',queue);document.fonts?.ready?.then(queue);
+new MutationObserver(queue).observe(board,{childList:true,attributes:true,attributeFilter:['style']});new MutationObserver(queue).observe(document.body,{childList:true,attributes:true,attributeFilter:['class']});queue()})();
+</script>
 </body>
 </html>
