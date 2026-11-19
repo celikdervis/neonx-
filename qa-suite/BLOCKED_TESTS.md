@@ -9,3 +9,5 @@
 | EN11 çevrim içi (PeerJS) | `unpkg.com` ve `0.peerjs.com` engelli | PeerJS sunucusuna erişim veya yerel PeerServer (ayrı onay gerekir) |
 | Ana sayfa (`index.html`) tam arayüz akışları | BLOCKED değil, **NOT TESTED**: sayfa mock ile açılıyor ve ayrılma API'si test edildi; drawer arayüzü üzerinden tıklamalı testler henüz yazılmadı | Sıradaki tur |
 | Performans (gerçek ağ) | Mock yerel ve anında yanıt veriyor; gerçek gecikme ölçülemiyor | Staging ortamı |
+| RE:VERSE gerçek cihaz mikrofonu (iOS Safari, Android Chrome) | Ortamda gerçek cihaz ve WebKit yok. Chromium'da iPhone/Android UA ile sayfanın mobil kod yolları test edildi; ama ses oturumu, mikrofon paylaşımı (kayıt + konuşma tanıma), arama ve Siri kesintileri ve gerçek izin pencereleri test edilemedi | Gerçek cihazda manuel test listesi: `MOBILE_APP_READINESS.md` §RE:VERSE |
+| RE:VERSE gerçek izin reddi | Headless Chromium her durumda `NotSupportedError` döndürüyor; red, gerçek tarayıcının `NotAllowedError` nesnesiyle taklit edildi | Gerçek cihaz |

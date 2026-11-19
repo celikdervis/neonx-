@@ -28,3 +28,19 @@ ve diğer sosyal modüller değiştirilmedi. Yeni modül veya yeni `<script>` ek
 Yan sayfalar `neon-social.js`'i sabit `?v=` sorgu dizesiyle yüklüyor (ör. `?v=20260928-home-identical-nav-v6`).
 GitHub Pages'in önbellek süresi kısa (yaklaşık 10 dk), ama düzeltmenin hemen yayılması isteniyorsa yayın sırasında
 bu sürüm dizelerinin güncellenmesi önerilir. Bu çalışmada HTML dosyalarına dokunulmadı.
+
+## FIX-03 → B-04 (RE:VERSE mikrofon)
+
+| | |
+|---|---|
+| Dosyalar | `side-games/reverse-xi/reverse-xi.js` (yalnızca mikrofon bölümü), `side-games/reverse-xi/index.html` (`?v=7` → `?v=8`) |
+| Oyun akışı | Değişmedi: oda, tur sırası, fazlar, tahmin doğrulama ve Firebase yolları aynı |
+| Yakalama | Tüm platformlarda tek hat: AudioContext + ScriptProcessor ile ham ses, 22.050 Hz'e yeniden örnekleme, ters çevirip WAV olarak gönderme. MediaRecorder, `decodeAudioData` ve `<audio>` ile çözme yedeği kaldırıldı (platforma göre değişen biçim ve çözme hatalarının kaynağı) |
+| iOS dokunuş kuralı | AudioContext oluşturma ve `resume()`, dokunuşun içinde ve izin isteğinden önce; 4 sn içinde başlamazsa anlaşılır hata |
+| Mobil konuşma tanıma | Telefonlarda kayıtla eşzamanlı çalıştırılmıyor; isim alanı gösteriliyor ("Futbolcunun adını aşağıya yazıp onayla"). Masaüstünde değişmedi |
+| Akış sağlığı | `ended` / `muted` izler yeniden kullanılmıyor; iz kayıt sırasında biterse kayıt iptal ediliyor |
+| Arka plan | `visibilitychange: hidden`: kayıt iptal, mikrofon serbest (sistem göstergesi kapanır); dönüşte bilgi mesajı. `beforeunload` yerine `pagehide` (iOS'ta güvenilir olan) |
+| Kalite kontrolleri | 0,3 sn'den kısa veya tepe seviyesi < 0,01 olan kayıt gönderilmiyor. 15 sn'de otomatik durma. Butonda geçen süre. Çift dokunma koruması. Gönderim sırasında onay butonu kilitli |
+| Hata mesajları | NotAllowed/Security → platforma özel izin yolu; NotFound → mikrofon yok; NotReadable/Abort → başka uygulama kullanıyor; mediaDevices yok veya NotSupported → "Safari veya Chrome'da aç" |
+| Kaldırılan ölü kod | `recognize()`, `captureName()` (hiçbir yerden çağrılmıyordu) |
+| Yükleme boyutu | iPhone'da 48 kHz → 22.050 Hz (aynı süre için ~2,2 kat küçük) |

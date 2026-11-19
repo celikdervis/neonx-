@@ -117,3 +117,34 @@ kuyruğa geri alınsın. Aynı yapının ana sayfadaki `safe-v4` kopyası da ayr
 | OBS-01 | Parti ayrılma | Ayrılma iki transaction'dan oluşuyor (önce parti düğümü, sonra kullanıcının işaretçisi). Arada kopma olursa bayat işaretçi kalabilir; bu durum `currentPartyMembership`/`validPartyFor` ile kendiliğinden düzeliyor. Ana sayfadaki yöntemle aynı | — | Bilgi |
 | OBS-02 | Mevcut testler | `scripts/test_imposter_realtime_render.cjs` ve `scripts/test_xox_answer_review.cjs` bu çalışmadan önce de FAIL veriyordu | P3 | Bu çalışmada incelenmedi |
 | OBS-03 | Mevcut testler | `scripts/` testlerinin çoğu "kaynakta şu metin var mı" kontrolü yapıyor; B-01 ve B-02'yi yakalamadılar | — | Bilgi |
+
+---
+
+## B-04 — RE:VERSE mikrofon: mobilde sessiz kayıt, takılan kayıt, belirsiz hatalar
+
+| Alan | Değer |
+|---|---|
+| Modül | RE:VERSE (`side-games/reverse-xi/reverse-xi.js`) |
+| Öncelik | P1 (oyunun temel mekaniği mikrofon; kayıt sessiz giderse karşı taraf oynayamıyor) |
+| Durum | **FIXED (Chromium'da doğrulandı)**. Gerçek iOS/Android cihaz doğrulaması **BLOCKED** |
+
+Geçmiş: 1 Kasım'da iOS için 7 ardışık yama yapılmış (PCM yakalama, AudioContext'i yeniden kullanma, Safari çözme yedeği).
+Bu yamalar belirtileri hedef almış; aşağıdaki nedenler yerinde kalmıştı.
+
+| # | Kök neden | Kanıt | Kullanıcıya etkisi |
+|---|---|---|---|
+| 1 | AudioContext, izin isteği **bitince** (`await getUserMedia` sonrası) başlatılıyordu. iOS ses başlatmayı yalnızca dokunuş sırasında kabul eder | R-06: sıra `getUserMedia → resume` | İlk kayıtta "DURDUR" yazar ama hiçbir şey kaydedilmez, durdurma da çalışmaz (iOS) |
+| 2 | İsim kaydında kayıt ve `SpeechRecognition` **aynı anda** mikrofonu açıyordu | R-07: mobil UA'da tanıma kayıtla birlikte başlıyordu | Android Chrome ve iOS'ta iki yakalama mikrofonu paylaşamaz; bilinen sonuç sessiz kayıt veya tanıma hatası. **Cihazda doğrulanamadı** (platform davranışı) |
+| 3 | Mikrofon akışı maç boyunca açık tutuluyor, yalnızca `readyState` kontrol ediliyordu; arka plan için işlem yoktu | R-04: arka plana alınınca iz açık kaldı | iOS'ta arama veya arka plan sonrası iz "live ama muted" kalır, sonraki turlar sessiz kaydedilir; mikrofon göstergesi sürekli açık |
+| 4 | Sessiz kayıt fark edilmeden karşıya gönderiliyordu | R-03 | "Ses karşı tarafa ulaşmıyor": aslında sessizlik ulaşıyor |
+| 5 | İzin hataları ham İngilizce mesajla veya JS hatasıyla gösteriliyordu; `mediaDevices` yoksa (uygulama içi tarayıcılar) hata çıkıyordu | R-02, R-02b | Oyuncu ne yapacağını bilmiyor |
+| 6 | Kayıt süresi sınırsızdı; çift dokunma iki mikrofon isteği açıyordu; iPhone 48 kHz yüklüyordu (diğerleri 22 kHz) | R-08, R-09, R-01 iPhone | Büyük ve yavaş yükleme; çift kayıt |
+
+Testler (`tests/reverse-mic*.spec.mjs`, iki bağımsız kullanıcı, Chromium sahte mikrofonu bilinen WAV ile besleniyor; karşı tarafa
+giden WAV çözülüp sesli olduğu ve **ters çevrildiği** (yükselen tarama → düşen) kontrol ediliyor):
+
+| Aşama | Sonuç |
+|---|---|
+| Düzeltme öncesi (13 test) | 9 FAIL, 4 PASS (masaüstü ve Android'de tam iki tur, iz kesilmesi ve masaüstü tanıma geçiyordu) |
+| Düzeltme sonrası (15 test × 5 tekrar) | **75/75 PASS** |
+| Ayırt edicilik (orijinal koda karşı, 15 test) | 11 FAIL, 4 PASS |
